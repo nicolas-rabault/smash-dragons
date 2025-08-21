@@ -103,16 +103,54 @@ function loadFallbackAssets() {
   );
 }
 
-// Initialize Kaboom
+// Initialize Kaboom with responsive settings
 window.addEventListener("load", async () => {
+  // Calculate responsive dimensions
+  const getResponsiveDimensions = () => {
+    const isMobile = window.innerWidth <= 768;
+    const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+
+    if (isMobile) {
+      // On mobile, use full viewport
+      return {
+        width: Math.min(window.innerWidth, 800),
+        height: Math.min(window.innerHeight, 600),
+        scale: 1,
+      };
+    } else if (isTablet) {
+      // On tablet, scale appropriately
+      return {
+        width: GAME_WIDTH,
+        height: GAME_HEIGHT,
+        scale:
+          Math.min(
+            window.innerWidth / GAME_WIDTH,
+            window.innerHeight / GAME_HEIGHT
+          ) * 0.9,
+      };
+    } else {
+      // On desktop, use fixed size
+      return {
+        width: GAME_WIDTH,
+        height: GAME_HEIGHT,
+        scale: 1,
+      };
+    }
+  };
+
+  const dimensions = getResponsiveDimensions();
+  console.log("Game dimensions:", dimensions);
+
   kaboom({
     root: document.getElementById("game-container"),
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
-    scale: 1,
+    width: dimensions.width,
+    height: dimensions.height,
+    scale: dimensions.scale,
     background: [10, 5, 25],
     touchToMouse: true,
     focus: true,
+    stretch: true, // Allow stretching to fit container
+    letterbox: true, // Maintain aspect ratio with black bars if needed
   });
 
   setGravity(GRAVITY);
@@ -126,6 +164,13 @@ window.addEventListener("load", async () => {
   // Start with main menu
   go("menu");
 
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    const newDimensions = getResponsiveDimensions();
+    console.log("Window resized, new dimensions:", newDimensions);
+    // Note: Kaboom doesn't support dynamic resize, but we log for debugging
+  });
+
   // Ensure canvas has focus for keyboard input
   setTimeout(() => {
     const canvas = document.querySelector("canvas");
@@ -133,6 +178,11 @@ window.addEventListener("load", async () => {
       canvas.focus();
       canvas.setAttribute("tabindex", "0");
       console.log("Canvas focused for keyboard input");
+
+      // Make canvas responsive
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.objectFit = "contain";
     }
   }, 100);
 });
@@ -914,9 +964,11 @@ function setupMobileControls(player) {
       navigator.userAgent
     ) ||
     "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0;
+    navigator.maxTouchPoints > 0 ||
+    window.innerWidth <= 768;
 
   console.log("Is mobile device:", isMobile);
+  console.log("Window dimensions:", window.innerWidth, "x", window.innerHeight);
 
   // Only setup mobile controls on actual mobile devices
   if (!isMobile) {
