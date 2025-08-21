@@ -172,8 +172,6 @@ function initializeScenes() {
       "Z or UP - Jump",
       "SPACE or E - Shoot Fireballs",
       "Defeat the Dragon Boss!",
-      "",
-      "Press SPACE to Start",
     ];
 
     instructions.forEach((line, i) => {
@@ -188,7 +186,61 @@ function initializeScenes() {
       ]);
     });
 
-    // Start game on space press
+    // Create clickable start button
+    const startButton = add([
+      rect(200, 60),
+      pos(GAME_WIDTH / 2, 420),
+      anchor("center"),
+      color(50, 150, 50),
+      area(),
+      "startButton",
+      {
+        isHovered: false,
+      },
+    ]);
+
+    // Button text
+    const buttonText = add([
+      text("START GAME", {
+        size: 20,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, 420),
+      anchor("center"),
+      color(255, 255, 255),
+      z(10),
+    ]);
+
+    // Button hover effects
+    startButton.onUpdate(() => {
+      const mouse = mousePos();
+      const isHovering =
+        mouse.x >= startButton.pos.x - 100 &&
+        mouse.x <= startButton.pos.x + 100 &&
+        mouse.y >= startButton.pos.y - 30 &&
+        mouse.y <= startButton.pos.y + 30;
+
+      if (isHovering && !startButton.isHovered) {
+        startButton.isHovered = true;
+        startButton.color = rgb(70, 200, 70);
+        buttonText.color = rgb(255, 255, 255);
+        document.body.style.cursor = "pointer";
+      } else if (!isHovering && startButton.isHovered) {
+        startButton.isHovered = false;
+        startButton.color = rgb(50, 150, 50);
+        buttonText.color = rgb(255, 255, 255);
+        document.body.style.cursor = "default";
+      }
+    });
+
+    // Button click handler
+    startButton.onClick(() => {
+      console.log("Start button clicked - starting game");
+      gameState.gameStarted = true;
+      go("game");
+    });
+
+    // Keep keyboard support for accessibility
     onKeyPress("space", () => {
       console.log("Space pressed in menu - starting game");
       gameState.gameStarted = true;
@@ -239,32 +291,96 @@ function initializeScenes() {
       anchor("center"),
     ]);
 
-    // Restart instruction
-    add([
-      text("Press SPACE to restart", {
-        size: 20,
+    // Restart button
+    const restartButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 20),
+      anchor("center"),
+      color(50, 150, 50),
+      area(),
+      "restartButton",
+      {
+        isHovered: false,
+      },
+    ]);
+
+    const restartText = add([
+      text("RESTART", {
+        size: 18,
         font: "sink",
       }),
+      pos(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 20),
+      anchor("center"),
       color(255, 255, 255),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
-      anchor("center"),
+      z(10),
     ]);
 
-    // Alternative instruction
-    add([
-      text("Press ENTER to return to menu", {
-        size: 16,
+    // Menu button
+    const menuButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 + 100, GAME_HEIGHT / 2 + 20),
+      anchor("center"),
+      color(150, 50, 50),
+      area(),
+      "menuButton",
+      {
+        isHovered: false,
+      },
+    ]);
+
+    const menuText = add([
+      text("MAIN MENU", {
+        size: 18,
         font: "sink",
       }),
-      color(200, 200, 200),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 40),
+      pos(GAME_WIDTH / 2 + 100, GAME_HEIGHT / 2 + 20),
       anchor("center"),
+      color(255, 255, 255),
+      z(10),
     ]);
 
-    // Restart game
-    onKeyPress("space", () => {
-      console.log("Restarting game from game over");
-      // Reset game state
+    // Button hover effects
+    restartButton.onUpdate(() => {
+      const mouse = mousePos();
+      const isHovering =
+        mouse.x >= restartButton.pos.x - 90 &&
+        mouse.x <= restartButton.pos.x + 90 &&
+        mouse.y >= restartButton.pos.y - 25 &&
+        mouse.y <= restartButton.pos.y + 25;
+
+      if (isHovering && !restartButton.isHovered) {
+        restartButton.isHovered = true;
+        restartButton.color = rgb(70, 200, 70);
+        document.body.style.cursor = "pointer";
+      } else if (!isHovering && restartButton.isHovered) {
+        restartButton.isHovered = false;
+        restartButton.color = rgb(50, 150, 50);
+        document.body.style.cursor = "default";
+      }
+    });
+
+    menuButton.onUpdate(() => {
+      const mouse = mousePos();
+      const isHovering =
+        mouse.x >= menuButton.pos.x - 90 &&
+        mouse.x <= menuButton.pos.x + 90 &&
+        mouse.y >= menuButton.pos.y - 25 &&
+        mouse.y <= menuButton.pos.y + 25;
+
+      if (isHovering && !menuButton.isHovered) {
+        menuButton.isHovered = true;
+        menuButton.color = rgb(200, 70, 70);
+        document.body.style.cursor = "pointer";
+      } else if (!isHovering && menuButton.isHovered) {
+        menuButton.isHovered = false;
+        menuButton.color = rgb(150, 50, 50);
+        document.body.style.cursor = "default";
+      }
+    });
+
+    // Button click handlers
+    restartButton.onClick(() => {
+      console.log("Restart button clicked");
       gameState = {
         score: 0,
         lives: 3,
@@ -275,7 +391,31 @@ function initializeScenes() {
       go("game");
     });
 
-    // Return to menu
+    menuButton.onClick(() => {
+      console.log("Menu button clicked");
+      gameState = {
+        score: 0,
+        lives: 3,
+        level: 1,
+        bossDefeated: false,
+        gameStarted: false,
+      };
+      go("menu");
+    });
+
+    // Keep keyboard support for accessibility
+    onKeyPress("space", () => {
+      console.log("Restarting game from game over");
+      gameState = {
+        score: 0,
+        lives: 3,
+        level: 1,
+        bossDefeated: false,
+        gameStarted: true,
+      };
+      go("game");
+    });
+
     onKeyPress("enter", () => {
       console.log("Returning to menu from game over");
       gameState = {
