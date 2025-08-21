@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kaboom Data URI Test</title>
+</head>
+<body>
+  <script src="https://unpkg.com/kaboom/dist/kaboom.js"></script>
+  <script>
+    kaboom({
+      width: 100,
+      height: 100,
+      scale: 1,
+      background: [0, 0, 0, 1],
+    });
+    // Load a simple red 2x2 PNG encoded as a Data URI.  This
+    // test checks whether Kaboom can decode Data URIs when run
+    // from the file:// scheme.
+    loadSprite('red', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR4nGP8z8Dwn4GBgYGJAQoAHxcCAk+Uzr4AAAAASUVORK5CYII=');
+    scene('main', () => {
+      add([
+        sprite('red'),
+        pos(10, 10),
+        scale(20),
+      ]);
+    });
+    go('main');
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Test Data Sprite</title></head>
+<body>
+<div id="game"></div>
+<script src="https://unpkg.com/kaboom/dist/kaboom.js"></script>
+<script src="assets_data_uris.js"></script>
+<script>
+  kaboom({ root: document.getElementById('game'), width:300, height:300, scale:1 });
+  loadSprite('hero', heroDataURI);
+  scene('test', async () => {
+    await loadSprite('hero');
+    add([ sprite('hero'), pos(150, 150), anchor('center'), scale(1) ]);
+  });
+  go('test');
+</script>
+</body>
+</html>
