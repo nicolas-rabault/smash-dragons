@@ -71,6 +71,12 @@ async function loadGameAssets() {
     loadSprite("waterball", assets.waterball);
     loadSprite("platform", assets.platform);
 
+    // Load mobile control icons from the assets folder
+    loadSprite("leftArrow", "./assets/left.png");
+    loadSprite("rightArrow", "./assets/left.png"); // We'll flip this
+    loadSprite("fireIcon", "./assets/fireball.png");
+    loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
+
     console.log("Assets loaded successfully");
   } catch (error) {
     console.error("Failed to load assets:", error);
@@ -99,6 +105,24 @@ function loadFallbackAssets() {
   );
   loadSprite(
     "platform",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+
+  // Fallback mobile control icons (simple shapes)
+  loadSprite(
+    "leftArrow",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "rightArrow",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "fireIcon",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "jumpIcon",
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
   );
 }
@@ -1045,82 +1069,173 @@ function setupMobileControls(player) {
     }
   });
 
-  // Draw mobile controls (only on mobile devices)
-  add([
-    rect(120, 80),
-    pos(20, GAME_HEIGHT - 100),
-    color(255, 255, 255, 0.3),
+  // Create mobile control buttons with sprites
+  const buttonSize = 70;
+  const buttonSpacing = 10;
+  const bottomMargin = 30;
+
+  // Left arrow button
+  const leftBtn = add([
+    rect(buttonSize, buttonSize),
+    pos(buttonSpacing, GAME_HEIGHT - buttonSize - bottomMargin),
+    color(0, 0, 0, 0.5),
+    area(),
     fixed(),
     z(110),
     "mobileControl",
+    "leftBtn",
   ]);
 
   add([
-    text("L", { size: 24 }),
-    pos(80, GAME_HEIGHT - 60),
-    color(255, 255, 255),
+    sprite("leftArrow"),
+    pos(
+      buttonSpacing + buttonSize / 2,
+      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+    ),
+    scale(0.3),
     anchor("center"),
+    color(255, 255, 255),
     fixed(),
     z(111),
     "mobileControl",
   ]);
 
-  add([
-    rect(120, 80),
-    pos(150, GAME_HEIGHT - 100),
-    color(255, 255, 255, 0.3),
+  // Right arrow button
+  const rightBtn = add([
+    rect(buttonSize, buttonSize),
+    pos(
+      buttonSpacing * 2 + buttonSize,
+      GAME_HEIGHT - buttonSize - bottomMargin
+    ),
+    color(0, 0, 0, 0.5),
+    area(),
     fixed(),
     z(110),
     "mobileControl",
+    "rightBtn",
   ]);
 
   add([
-    text("R", { size: 24 }),
-    pos(210, GAME_HEIGHT - 60),
-    color(255, 255, 255),
+    sprite("leftArrow"),
+    pos(
+      buttonSpacing * 2 + buttonSize + buttonSize / 2,
+      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+    ),
+    scale(-0.3, 0.3), // Flip horizontally for right arrow
     anchor("center"),
+    color(255, 255, 255),
     fixed(),
     z(111),
     "mobileControl",
   ]);
 
-  add([
-    rect(100, 80),
-    pos(GAME_WIDTH - 220, GAME_HEIGHT - 100),
-    color(255, 255, 255, 0.3),
+  // Jump button
+  const jumpBtn = add([
+    rect(buttonSize, buttonSize),
+    pos(
+      GAME_WIDTH - buttonSpacing * 2 - buttonSize * 2,
+      GAME_HEIGHT - buttonSize - bottomMargin
+    ),
+    color(0, 0, 0, 0.5),
+    area(),
     fixed(),
     z(110),
     "mobileControl",
+    "jumpBtn",
   ]);
 
   add([
-    text("J", { size: 24 }),
-    pos(GAME_WIDTH - 170, GAME_HEIGHT - 60),
-    color(255, 255, 255),
+    sprite("jumpIcon"),
+    pos(
+      GAME_WIDTH - buttonSpacing * 2 - buttonSize * 2 + buttonSize / 2,
+      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+    ),
+    scale(0.2),
     anchor("center"),
+    color(255, 255, 255),
     fixed(),
     z(111),
     "mobileControl",
   ]);
 
-  add([
-    rect(100, 80),
-    pos(GAME_WIDTH - 110, GAME_HEIGHT - 100),
-    color(255, 255, 255, 0.3),
+  // Fire button
+  const fireBtn = add([
+    rect(buttonSize, buttonSize),
+    pos(
+      GAME_WIDTH - buttonSpacing - buttonSize,
+      GAME_HEIGHT - buttonSize - bottomMargin
+    ),
+    color(0, 0, 0, 0.5),
+    area(),
     fixed(),
     z(110),
     "mobileControl",
+    "fireBtn",
   ]);
 
   add([
-    text("F", { size: 24 }),
-    pos(GAME_WIDTH - 60, GAME_HEIGHT - 60),
-    color(255, 255, 255),
+    sprite("fireIcon"),
+    pos(
+      GAME_WIDTH - buttonSpacing - buttonSize / 2,
+      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+    ),
+    scale(0.25),
     anchor("center"),
+    color(255, 255, 255),
     fixed(),
     z(111),
     "mobileControl",
   ]);
+
+  // Enhanced touch detection with press/release for movement buttons
+  leftBtn.onMouseDown(() => {
+    console.log("Left button pressed");
+    mobile.left = true;
+  });
+
+  leftBtn.onMouseRelease(() => {
+    console.log("Left button released");
+    mobile.left = false;
+  });
+
+  rightBtn.onMouseDown(() => {
+    console.log("Right button pressed");
+    mobile.right = true;
+  });
+
+  rightBtn.onMouseRelease(() => {
+    console.log("Right button released");
+    mobile.right = false;
+  });
+
+  // Jump and fire use click events (one-time actions)
+  jumpBtn.onClick(() => {
+    console.log("Jump button clicked");
+    if (player.isGrounded()) {
+      try {
+        player.jump(JUMP_FORCE);
+        addJumpEffect(player.pos);
+      } catch (error) {
+        console.error("Error in mobile jump:", error);
+      }
+    }
+  });
+
+  fireBtn.onClick(() => {
+    console.log("Fire button clicked");
+    if (player.canShoot) {
+      spawnFireball(player);
+    }
+  });
+
+  // Add visual feedback for button presses
+  leftBtn.onUpdate(() => {
+    leftBtn.color = mobile.left ? rgb(100, 100, 100, 0.8) : rgb(0, 0, 0, 0.5);
+  });
+
+  rightBtn.onUpdate(() => {
+    rightBtn.color = mobile.right ? rgb(100, 100, 100, 0.8) : rgb(0, 0, 0, 0.5);
+  });
 }
 
 function playerDies(player) {
