@@ -38,14 +38,14 @@ Touch the virtual buttons displayed on screen:
 
 ### Play Online
 
-The game is automatically deployed to GitHub Pages: [Play Smash Dragons](https://nicolasrabault.github.io/smash-dragons/)
+The game is automatically deployed to GitHub Pages: [Play Smash Dragons](https://nicolas-rabault.github.io/smash-dragons/)
 
 ### Run Locally
 
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/nicolasrabault/smash-dragons.git
+   git clone https://github.com/nicolas-rabault/smash-dragons.git
    cd smash-dragons
    ```
 
