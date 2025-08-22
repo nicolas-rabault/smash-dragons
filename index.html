@@ -147,6 +147,25 @@
         display: none;
       }
     }
+    
+    /* Portrait mobile specific */
+    @media (max-width: 768px) and (orientation: portrait) {
+      canvas {
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: contain;
+      }
+    }
+    
+    /* Ensure proper touch handling */
+    @media (max-width: 768px) {
+      canvas {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+    }
   </style>
 </head>
 <body>

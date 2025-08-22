@@ -289,14 +289,16 @@ function initializeScenes() {
       z(10),
     ]);
 
-    // Button hover effects
+    // Enhanced button interaction for mobile
     startButton.onUpdate(() => {
       const mouse = mousePos();
+      const buttonWidth = 200;
+      const buttonHeight = 60;
       const isHovering =
-        mouse.x >= startButton.pos.x - 100 &&
-        mouse.x <= startButton.pos.x + 100 &&
-        mouse.y >= startButton.pos.y - 30 &&
-        mouse.y <= startButton.pos.y + 30;
+        mouse.x >= startButton.pos.x - buttonWidth / 2 &&
+        mouse.x <= startButton.pos.x + buttonWidth / 2 &&
+        mouse.y >= startButton.pos.y - buttonHeight / 2 &&
+        mouse.y <= startButton.pos.y + buttonHeight / 2;
 
       if (isHovering && !startButton.isHovered) {
         startButton.isHovered = true;
@@ -311,11 +313,22 @@ function initializeScenes() {
       }
     });
 
-    // Button click handler
+    // Enhanced click handler with better touch support
     startButton.onClick(() => {
       console.log("Start button clicked - starting game");
       gameState.gameStarted = true;
       go("game");
+    });
+
+    // Add touch events for mobile
+    startButton.onMouseDown(() => {
+      console.log("Start button pressed");
+      startButton.color = rgb(30, 100, 30);
+    });
+
+    startButton.onMouseRelease(() => {
+      console.log("Start button released");
+      startButton.color = rgb(50, 150, 50);
     });
 
     // Keep keyboard support for accessibility
@@ -1081,16 +1094,25 @@ function setupMobileControls(player) {
     }
   });
 
-  // Create mobile control buttons with responsive sizing
+  // Create mobile control buttons with proper sizing
   const screenWidth = width();
   const screenHeight = height();
-  const buttonSize = Math.min(screenWidth * 0.12, 80); // 12% of screen width, max 80px
-  const buttonSpacing = Math.min(screenWidth * 0.02, 15); // 2% of screen width, max 15px
-  const bottomMargin = Math.min(screenHeight * 0.05, 40); // 5% of screen height, max 40px
+  const isPortrait = screenHeight > screenWidth;
+
+  // Smaller buttons that don't interfere with gameplay
+  const buttonSize = isPortrait
+    ? Math.min(screenWidth * 0.08, 60) // Portrait: 8% of width, max 60px
+    : Math.min(screenWidth * 0.06, 50); // Landscape: 6% of width, max 50px
+
+  const buttonSpacing = Math.min(screenWidth * 0.015, 12); // Smaller spacing
+  const bottomMargin = isPortrait
+    ? Math.min(screenHeight * 0.03, 25) // Portrait: 3% margin
+    : Math.min(screenHeight * 0.05, 30); // Landscape: 5% margin
 
   console.log("Mobile controls sizing:", {
     screenWidth,
     screenHeight,
+    isPortrait,
     buttonSize,
     buttonSpacing,
     bottomMargin,
@@ -1100,7 +1122,8 @@ function setupMobileControls(player) {
   const leftBtn = add([
     rect(buttonSize, buttonSize),
     pos(buttonSpacing, screenHeight - buttonSize - bottomMargin),
-    color(0, 0, 0, 0.5),
+    color(0, 0, 0, 0.3),
+    outline(2, rgb(255, 255, 255, 0.6)),
     area(),
     fixed(),
     z(110),
@@ -1114,7 +1137,7 @@ function setupMobileControls(player) {
       buttonSpacing + buttonSize / 2,
       screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(buttonSize * 0.008),
+    scale(buttonSize * 0.012),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1129,7 +1152,8 @@ function setupMobileControls(player) {
       buttonSpacing * 2 + buttonSize,
       screenHeight - buttonSize - bottomMargin
     ),
-    color(0, 0, 0, 0.5),
+    color(0, 0, 0, 0.3),
+    outline(2, rgb(255, 255, 255, 0.6)),
     area(),
     fixed(),
     z(110),
@@ -1143,7 +1167,7 @@ function setupMobileControls(player) {
       buttonSpacing * 2 + buttonSize + buttonSize / 2,
       screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(-buttonSize * 0.008, buttonSize * 0.008), // Flip horizontally for right arrow
+    scale(-buttonSize * 0.012, buttonSize * 0.012), // Flip horizontally for right arrow
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1158,7 +1182,8 @@ function setupMobileControls(player) {
       screenWidth - buttonSpacing * 2 - buttonSize * 2,
       screenHeight - buttonSize - bottomMargin
     ),
-    color(0, 0, 0, 0.5),
+    color(0, 0, 0, 0.3),
+    outline(2, rgb(255, 255, 255, 0.6)),
     area(),
     fixed(),
     z(110),
@@ -1172,7 +1197,7 @@ function setupMobileControls(player) {
       screenWidth - buttonSpacing * 2 - buttonSize * 2 + buttonSize / 2,
       screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(buttonSize * 0.006),
+    scale(buttonSize * 0.01),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1187,7 +1212,8 @@ function setupMobileControls(player) {
       screenWidth - buttonSpacing - buttonSize,
       screenHeight - buttonSize - bottomMargin
     ),
-    color(0, 0, 0, 0.5),
+    color(0, 0, 0, 0.3),
+    outline(2, rgb(255, 255, 255, 0.6)),
     area(),
     fixed(),
     z(110),
@@ -1201,7 +1227,7 @@ function setupMobileControls(player) {
       screenWidth - buttonSpacing - buttonSize / 2,
       screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(buttonSize * 0.007),
+    scale(buttonSize * 0.011),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1252,11 +1278,11 @@ function setupMobileControls(player) {
 
   // Add visual feedback for button presses
   leftBtn.onUpdate(() => {
-    leftBtn.color = mobile.left ? rgb(100, 100, 100, 0.8) : rgb(0, 0, 0, 0.5);
+    leftBtn.color = mobile.left ? rgb(100, 100, 100, 0.6) : rgb(0, 0, 0, 0.3);
   });
 
   rightBtn.onUpdate(() => {
-    rightBtn.color = mobile.right ? rgb(100, 100, 100, 0.8) : rgb(0, 0, 0, 0.5);
+    rightBtn.color = mobile.right ? rgb(100, 100, 100, 0.6) : rgb(0, 0, 0, 0.3);
   });
 }
 
