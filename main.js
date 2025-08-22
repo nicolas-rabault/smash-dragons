@@ -234,6 +234,7 @@ window.addEventListener("load", async () => {
     height: dimensions.height,
     scale: dimensions.scale,
     background: [10, 5, 25],
+    debug: true, // Enable debug mode to see collision boundaries
     touchToMouse: true,
     focus: true,
     stretch: true, // Allow stretching to fit container
@@ -688,7 +689,12 @@ function createPlayer() {
     sprite("hero"),
     scale(0.5),
     pos(180, 400),
-    area(),
+    // Custom collision area - smaller than full sprite for better gameplay
+    // Original sprite: 94x106, scaled by 0.5 = 47x53
+    // Custom area: centered, reduced size focusing on torso
+    area({
+      shape: new Rect(vec2(10, 0), 30, 106), // x_offset, y_offset, width, height
+    }),
     body(),
     anchor("center"),
     {
