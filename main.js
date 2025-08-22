@@ -122,15 +122,13 @@ function createFireballExplosion(x, y) {
 // Load assets from JSON
 async function loadGameAssets() {
   try {
-    const response = await fetch("./assets_data_uris.json");
-    const assets = await response.json();
-
-    // Load all sprites
-    loadSprite("hero", assets.hero);
-    loadSprite("dragon", assets.dragon);
-    loadSprite("fireball", assets.fireball);
-    loadSprite("waterball", assets.waterball);
-    loadSprite("platform", assets.platform);
+    // Load PNG files directly instead of data URIs
+    loadSprite("hero", "./assets/hero.png");
+    loadSprite("dragon", "./assets/dragon.png");
+    loadSprite("fireball", "./assets/fireball.png");
+    loadSprite("waterball", "./assets/waterball.png");
+    loadSprite("platform", "./assets/platform.png");
+    loadSprite("background", "./assets/background.png");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
@@ -138,9 +136,9 @@ async function loadGameAssets() {
     loadSprite("fireIcon", "./assets/fireball.png");
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
 
-    console.log("Assets loaded successfully");
+    console.log("PNG assets loaded successfully");
   } catch (error) {
-    console.error("Failed to load assets:", error);
+    console.error("Failed to load PNG assets:", error);
     // Fallback to basic shapes if assets fail to load
     loadFallbackAssets();
   }
