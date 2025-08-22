@@ -85,6 +85,7 @@
         position: fixed;
         width: 100%;
         height: 100%;
+        overflow: hidden;
       }
       
       #game-container {
@@ -93,19 +94,24 @@
         left: 0;
         width: 100%;
         height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       
       canvas {
         border: none !important;
         border-radius: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        max-width: none !important;
-        max-height: none !important;
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        width: auto !important;
+        height: auto !important;
         object-fit: contain;
-        position: absolute;
-        top: 0;
-        left: 0;
+        display: block;
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
       }
       
       .info-panel {
