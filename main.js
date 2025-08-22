@@ -135,11 +135,15 @@ window.addEventListener("load", async () => {
     const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
 
     if (isMobile) {
-      // On mobile, use full viewport
+      // On mobile, use actual viewport dimensions for full scaling
+      const scaleX = window.innerWidth / GAME_WIDTH;
+      const scaleY = window.innerHeight / GAME_HEIGHT;
+      const scale = Math.min(scaleX, scaleY);
+
       return {
-        width: Math.min(window.innerWidth, 800),
-        height: Math.min(window.innerHeight, 600),
-        scale: 1,
+        width: GAME_WIDTH,
+        height: GAME_HEIGHT,
+        scale: scale,
       };
     } else if (isTablet) {
       // On tablet, scale appropriately
@@ -1006,12 +1010,20 @@ function setupMobileControls(player) {
   function updateMobileInput(pos) {
     const x = pos.x;
     const y = pos.y;
-    const bottom = GAME_HEIGHT - 120;
+    const bottom = screenHeight - buttonSize * 2;
 
-    mobile.left = x < 150 && y > bottom;
-    mobile.right = x >= 150 && x < 300 && y > bottom;
-    mobile.jump = x >= GAME_WIDTH - 250 && x < GAME_WIDTH - 125 && y > bottom;
-    mobile.fire = x >= GAME_WIDTH - 125 && y > bottom;
+    // Use the actual button positions for touch detection
+    mobile.left =
+      x < buttonSpacing * 2 + buttonSize && x > buttonSpacing && y > bottom;
+    mobile.right =
+      x >= buttonSpacing * 2 + buttonSize &&
+      x < buttonSpacing * 3 + buttonSize * 2 &&
+      y > bottom;
+    mobile.jump =
+      x >= screenWidth - buttonSpacing * 2 - buttonSize * 2 &&
+      x < screenWidth - buttonSpacing * 2 - buttonSize &&
+      y > bottom;
+    mobile.fire = x >= screenWidth - buttonSpacing - buttonSize && y > bottom;
   }
 
   onMouseDown(() => {
@@ -1069,15 +1081,25 @@ function setupMobileControls(player) {
     }
   });
 
-  // Create mobile control buttons with sprites
-  const buttonSize = 70;
-  const buttonSpacing = 10;
-  const bottomMargin = 30;
+  // Create mobile control buttons with responsive sizing
+  const screenWidth = width();
+  const screenHeight = height();
+  const buttonSize = Math.min(screenWidth * 0.12, 80); // 12% of screen width, max 80px
+  const buttonSpacing = Math.min(screenWidth * 0.02, 15); // 2% of screen width, max 15px
+  const bottomMargin = Math.min(screenHeight * 0.05, 40); // 5% of screen height, max 40px
+
+  console.log("Mobile controls sizing:", {
+    screenWidth,
+    screenHeight,
+    buttonSize,
+    buttonSpacing,
+    bottomMargin,
+  });
 
   // Left arrow button
   const leftBtn = add([
     rect(buttonSize, buttonSize),
-    pos(buttonSpacing, GAME_HEIGHT - buttonSize - bottomMargin),
+    pos(buttonSpacing, screenHeight - buttonSize - bottomMargin),
     color(0, 0, 0, 0.5),
     area(),
     fixed(),
@@ -1090,9 +1112,9 @@ function setupMobileControls(player) {
     sprite("leftArrow"),
     pos(
       buttonSpacing + buttonSize / 2,
-      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+      screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(0.3),
+    scale(buttonSize * 0.008),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1105,7 +1127,7 @@ function setupMobileControls(player) {
     rect(buttonSize, buttonSize),
     pos(
       buttonSpacing * 2 + buttonSize,
-      GAME_HEIGHT - buttonSize - bottomMargin
+      screenHeight - buttonSize - bottomMargin
     ),
     color(0, 0, 0, 0.5),
     area(),
@@ -1119,9 +1141,9 @@ function setupMobileControls(player) {
     sprite("leftArrow"),
     pos(
       buttonSpacing * 2 + buttonSize + buttonSize / 2,
-      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+      screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(-0.3, 0.3), // Flip horizontally for right arrow
+    scale(-buttonSize * 0.008, buttonSize * 0.008), // Flip horizontally for right arrow
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1133,8 +1155,8 @@ function setupMobileControls(player) {
   const jumpBtn = add([
     rect(buttonSize, buttonSize),
     pos(
-      GAME_WIDTH - buttonSpacing * 2 - buttonSize * 2,
-      GAME_HEIGHT - buttonSize - bottomMargin
+      screenWidth - buttonSpacing * 2 - buttonSize * 2,
+      screenHeight - buttonSize - bottomMargin
     ),
     color(0, 0, 0, 0.5),
     area(),
@@ -1147,10 +1169,10 @@ function setupMobileControls(player) {
   add([
     sprite("jumpIcon"),
     pos(
-      GAME_WIDTH - buttonSpacing * 2 - buttonSize * 2 + buttonSize / 2,
-      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+      screenWidth - buttonSpacing * 2 - buttonSize * 2 + buttonSize / 2,
+      screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(0.2),
+    scale(buttonSize * 0.006),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -1162,8 +1184,8 @@ function setupMobileControls(player) {
   const fireBtn = add([
     rect(buttonSize, buttonSize),
     pos(
-      GAME_WIDTH - buttonSpacing - buttonSize,
-      GAME_HEIGHT - buttonSize - bottomMargin
+      screenWidth - buttonSpacing - buttonSize,
+      screenHeight - buttonSize - bottomMargin
     ),
     color(0, 0, 0, 0.5),
     area(),
@@ -1176,10 +1198,10 @@ function setupMobileControls(player) {
   add([
     sprite("fireIcon"),
     pos(
-      GAME_WIDTH - buttonSpacing - buttonSize / 2,
-      GAME_HEIGHT - buttonSize / 2 - bottomMargin
+      screenWidth - buttonSpacing - buttonSize / 2,
+      screenHeight - buttonSize / 2 - bottomMargin
     ),
-    scale(0.25),
+    scale(buttonSize * 0.007),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
