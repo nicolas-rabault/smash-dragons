@@ -179,14 +179,15 @@
     <div class="loading">Loading Smash Dragons...</div>
   </div>  
   <script src="https://unpkg.com/kaboom@3000/dist/kaboom.js"></script>
-  <!-- Game modules in dependency order -->
-  <script src="main.js"></script>
+  <!-- Load game data and modules first -->
   <script src="gameData.js"></script>
   <script src="level.js"></script>
   <script src="powers.js"></script>
   <script src="character.js"></script>
   <script src="boss.js"></script>
   <script src="ui.js"></script>
+  <!-- Load main.js last to ensure all dependencies are available -->
+  <script src="main.js"></script>
   
   <script>
     // Show info panel after a delay
