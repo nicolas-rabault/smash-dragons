@@ -28,12 +28,378 @@ let gameState = {
   gameStarted: false,
 };
 
+// Audio Management System
+class AudioManager {
+  constructor() {
+    this.sounds = new Map();
+    this.currentMusic = null;
+    this.currentAmbience = null;
+    this.musicVolume = 0.7;
+    this.sfxVolume = 0.8;
+    this.ambienceVolume = 0.5;
+    this.isMuted = false;
+    this.isInitialized = false;
+    this.userInteracted = false;
+    this.currentScene = null;
+  }
+
+  // Initialize audio system
+  async init() {
+    try {
+      console.log("Initializing AudioManager...");
+
+      // Load all audio files
+      await this.loadSound(
+        "menuTheme",
+        "./assets/audio/menu_theme_loop.wav",
+        "music"
+      );
+      await this.loadSound(
+        "magmaAmbience",
+        "./assets/audio/magma_ambience_loop.wav",
+        "ambience"
+      );
+      await this.loadSound(
+        "deathRespawn",
+        "./assets/audio/death_respawn_stinger.wav",
+        "sfx"
+      );
+      await this.loadSound(
+        "victoryFanfare",
+        "./assets/audio/victory_fanfare.wav",
+        "sfx"
+      );
+
+      this.isInitialized = true;
+      console.log("AudioManager initialized successfully");
+    } catch (error) {
+      console.error("Error initializing AudioManager:", error);
+    }
+  }
+
+  // Load a sound with metadata
+  async loadSound(id, path, type) {
+    try {
+      console.log(`Loading ${type}: ${id}`);
+      loadSound(id, path);
+      this.sounds.set(id, {
+        id,
+        path,
+        type,
+        isPlaying: false,
+        instances: new Set(), // Track multiple instances
+      });
+    } catch (error) {
+      console.error(`Error loading sound ${id}:`, error);
+    }
+  }
+
+  // Enable user interaction for audio
+  enableUserInteraction() {
+    if (!this.userInteracted) {
+      this.userInteracted = true;
+      console.log("Audio user interaction enabled");
+      // If we're in menu and no music is playing, start menu music
+      this.startMenuMusicAfterInteraction();
+    }
+  }
+
+  // Play music (stops current music first)
+  playMusic(id, options = {}) {
+    if (!this.isInitialized || !this.userInteracted || this.isMuted) {
+      console.log(
+        `Cannot play music ${id}: initialized=${this.isInitialized}, userInteracted=${this.userInteracted}, muted=${this.isMuted}`
+      );
+      return;
+    }
+
+    try {
+      // Stop current music first
+      if (this.currentMusic) {
+        this.stopMusic();
+      }
+
+      // Force stop any existing instances of this sound
+      this.forceStopSound(id);
+
+      const volume = options.volume ?? this.musicVolume;
+      console.log(`Playing music: ${id} at volume ${volume}`);
+
+      const audioInstance = play(id, {
+        loop: true,
+        volume: volume,
+        ...options,
+      });
+
+      this.currentMusic = id;
+      const sound = this.sounds.get(id);
+      if (sound) {
+        sound.isPlaying = true;
+        sound.instances.add(audioInstance);
+      }
+
+      console.log(`Music ${id} started successfully`);
+      return audioInstance;
+    } catch (error) {
+      console.error(`Error playing music ${id}:`, error);
+    }
+  }
+
+  // Play ambience (stops current ambience first)
+  playAmbience(id, options = {}) {
+    if (!this.isInitialized || !this.userInteracted || this.isMuted) {
+      console.log(
+        `Cannot play ambience ${id}: initialized=${this.isInitialized}, userInteracted=${this.userInteracted}, muted=${this.isMuted}`
+      );
+      return;
+    }
+
+    try {
+      // Stop current ambience first
+      if (this.currentAmbience) {
+        this.stopAmbience();
+      }
+
+      // Force stop any existing instances of this sound
+      this.forceStopSound(id);
+
+      const volume = options.volume ?? this.ambienceVolume;
+      console.log(`Playing ambience: ${id} at volume ${volume}`);
+
+      const audioInstance = play(id, {
+        loop: true,
+        volume: volume,
+        ...options,
+      });
+
+      this.currentAmbience = id;
+      const sound = this.sounds.get(id);
+      if (sound) {
+        sound.isPlaying = true;
+        sound.instances.add(audioInstance);
+      }
+
+      console.log(`Ambience ${id} started successfully`);
+      return audioInstance;
+    } catch (error) {
+      console.error(`Error playing ambience ${id}:`, error);
+    }
+  }
+
+  // Play sound effect (one-shot)
+  playSFX(id, options = {}) {
+    if (!this.isInitialized || !this.userInteracted || this.isMuted) {
+      console.log(
+        `Cannot play SFX ${id}: initialized=${this.isInitialized}, userInteracted=${this.userInteracted}, muted=${this.isMuted}`
+      );
+      return;
+    }
+
+    try {
+      const volume = options.volume ?? this.sfxVolume;
+      console.log(`Playing SFX: ${id} at volume ${volume}`);
+
+      const audioInstance = play(id, {
+        loop: false,
+        volume: volume,
+        ...options,
+      });
+
+      // Track SFX instances for cleanup
+      const sound = this.sounds.get(id);
+      if (sound) {
+        sound.instances.add(audioInstance);
+
+        // Clean up instance when finished (for SFX)
+        if (audioInstance && audioInstance.onEnd) {
+          audioInstance.onEnd(() => {
+            sound.instances.delete(audioInstance);
+          });
+        }
+      }
+
+      console.log(`SFX ${id} played successfully`);
+      return audioInstance;
+    } catch (error) {
+      console.error(`Error playing SFX ${id}:`, error);
+    }
+  }
+
+  // Force stop all instances of a sound
+  forceStopSound(id) {
+    const sound = this.sounds.get(id);
+    if (sound && sound.instances.size > 0) {
+      console.log(`Force stopping ${sound.instances.size} instances of ${id}`);
+
+      // Stop each instance
+      sound.instances.forEach((instance) => {
+        try {
+          if (instance && instance.stop) {
+            instance.stop();
+          }
+        } catch (error) {
+          console.error(`Error stopping instance of ${id}:`, error);
+        }
+      });
+
+      // Clear all instances
+      sound.instances.clear();
+      sound.isPlaying = false;
+    }
+
+    // Also use Kaboom's stop function as backup
+    try {
+      stop(id);
+    } catch (error) {
+      console.error(`Error using Kaboom stop for ${id}:`, error);
+    }
+  }
+
+  // Stop current music
+  stopMusic() {
+    if (this.currentMusic) {
+      try {
+        console.log(`Stopping music: ${this.currentMusic}`);
+        this.forceStopSound(this.currentMusic);
+        this.currentMusic = null;
+        console.log("Music stopped successfully");
+      } catch (error) {
+        console.error(`Error stopping music:`, error);
+      }
+    }
+  }
+
+  // Stop current ambience
+  stopAmbience() {
+    if (this.currentAmbience) {
+      try {
+        console.log(`Stopping ambience: ${this.currentAmbience}`);
+        this.forceStopSound(this.currentAmbience);
+        this.currentAmbience = null;
+        console.log("Ambience stopped successfully");
+      } catch (error) {
+        console.error(`Error stopping ambience:`, error);
+      }
+    }
+  }
+
+  // Stop all audio
+  stopAll() {
+    console.log("Stopping all audio");
+    this.stopMusic();
+    this.stopAmbience();
+
+    // Force stop all other sounds
+    this.sounds.forEach((sound, id) => {
+      if (sound.instances.size > 0) {
+        console.log(`Stopping all instances of ${id}`);
+        this.forceStopSound(id);
+      }
+    });
+  }
+
+  // Scene transition helpers
+  transitionToMenu() {
+    console.log("Audio transition: -> Menu");
+    this.currentScene = "menu";
+    this.stopAll();
+    if (this.userInteracted) {
+      this.playMusic("menuTheme");
+    } else {
+      console.log(
+        "Menu transition: waiting for user interaction to start music"
+      );
+    }
+  }
+
+  // Start menu music after user interaction
+  startMenuMusicAfterInteraction() {
+    if (
+      this.userInteracted &&
+      !this.currentMusic &&
+      !this.isMuted &&
+      this.currentScene === "menu"
+    ) {
+      console.log("Starting menu music after user interaction");
+      this.playMusic("menuTheme");
+    }
+  }
+
+  transitionToGame() {
+    console.log("Audio transition: -> Game");
+    this.currentScene = "game";
+    this.stopAll();
+    this.playAmbience("magmaAmbience");
+  }
+
+  transitionToGameOver() {
+    console.log("Audio transition: -> Game Over");
+    this.currentScene = "gameOver";
+    this.stopAll();
+  }
+
+  // Volume controls
+  setMusicVolume(volume) {
+    this.musicVolume = Math.max(0, Math.min(1, volume));
+    console.log(`Music volume set to: ${this.musicVolume}`);
+  }
+
+  setSFXVolume(volume) {
+    this.sfxVolume = Math.max(0, Math.min(1, volume));
+    console.log(`SFX volume set to: ${this.sfxVolume}`);
+  }
+
+  setAmbienceVolume(volume) {
+    this.ambienceVolume = Math.max(0, Math.min(1, volume));
+    console.log(`Ambience volume set to: ${this.ambienceVolume}`);
+  }
+
+  // Mute controls
+  mute() {
+    this.isMuted = true;
+    this.stopAll();
+    console.log("Audio muted");
+  }
+
+  unmute() {
+    this.isMuted = false;
+    console.log("Audio unmuted");
+  }
+
+  toggleMute() {
+    if (this.isMuted) {
+      this.unmute();
+    } else {
+      this.mute();
+    }
+  }
+
+  // Get current state
+  getState() {
+    return {
+      isInitialized: this.isInitialized,
+      userInteracted: this.userInteracted,
+      isMuted: this.isMuted,
+      currentMusic: this.currentMusic,
+      currentAmbience: this.currentAmbience,
+      volumes: {
+        music: this.musicVolume,
+        sfx: this.sfxVolume,
+        ambience: this.ambienceVolume,
+      },
+    };
+  }
+}
+
+// Global audio manager instance
+const audioManager = new AudioManager();
+
 // Utility functions that need to be available globally
-function addJumpEffect(pos) {
+function addJumpEffect(playerPos) {
   for (let i = 0; i < 8; i++) {
     add([
       rect(rand(2, 4), rand(2, 4)),
-      pos(pos.x + rand(-15, 15), pos.y + 20),
+      pos(playerPos.x + rand(-15, 15), playerPos.y + 20),
       color(200, 200, 255),
       move(vec2(rand(-50, 50), rand(-100, -50)), 1),
       lifespan(0.3, { fade: 0.2 }),
@@ -136,9 +502,12 @@ async function loadGameAssets() {
     loadSprite("fireIcon", "./assets/fireball.png");
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
 
-    console.log("PNG assets loaded successfully");
+    // Initialize AudioManager
+    await audioManager.init();
+
+    console.log("PNG assets and audio loaded successfully");
   } catch (error) {
-    console.error("Failed to load PNG assets:", error);
+    console.error("Failed to load assets:", error);
     // Fallback to basic shapes if assets fail to load
     loadFallbackAssets();
   }
@@ -249,6 +618,15 @@ window.addEventListener("load", async () => {
   // Initialize all scenes first
   initializeScenes();
 
+  // Global audio controls (available in all scenes)
+  onKeyPress("m", () => {
+    audioManager.toggleMute();
+    console.log(
+      "Mute toggled:",
+      audioManager.getState().isMuted ? "MUTED" : "UNMUTED"
+    );
+  });
+
   // Start with main menu
   go("menu");
 
@@ -279,6 +657,9 @@ window.addEventListener("load", async () => {
 function initializeScenes() {
   // Main Menu Scene
   scene("menu", () => {
+    // Use AudioManager for menu transition
+    audioManager.transitionToMenu();
+
     // Background gradient
     add([rect(GAME_WIDTH, GAME_HEIGHT), pos(0, 0), color(15, 10, 40), z(-10)]);
 
@@ -323,6 +704,17 @@ function initializeScenes() {
         anchor("center"),
       ]);
     });
+
+    // Audio controls info
+    add([
+      text("Press M to mute/unmute audio", {
+        size: 14,
+        font: "sink",
+      }),
+      color(180, 180, 180),
+      pos(GAME_WIDTH / 2, 380),
+      anchor("center"),
+    ]);
 
     // Create clickable start button
     const startButton = add([
@@ -376,6 +768,10 @@ function initializeScenes() {
     // Enhanced click handler with better touch support
     startButton.onClick(() => {
       console.log("Start button clicked - starting game");
+
+      // Enable audio user interaction
+      audioManager.enableUserInteraction();
+
       gameState.gameStarted = true;
       go("game");
     });
@@ -394,12 +790,20 @@ function initializeScenes() {
     // Keep keyboard support for accessibility
     onKeyPress("space", () => {
       console.log("Space pressed in menu - starting game");
+
+      // Enable audio user interaction
+      audioManager.enableUserInteraction();
+
       gameState.gameStarted = true;
       go("game");
     });
 
     onKeyPress("enter", () => {
       console.log("Enter pressed in menu - starting game");
+
+      // Enable audio user interaction
+      audioManager.enableUserInteraction();
+
       gameState.gameStarted = true;
       go("game");
     });
@@ -410,12 +814,18 @@ function initializeScenes() {
       if (canvas) {
         canvas.focus();
       }
+
+      // Enable audio user interaction
+      audioManager.enableUserInteraction();
     });
   });
 
   // Game Over Scene
   scene("gameOver", () => {
     console.log("Game Over scene started");
+
+    // Use AudioManager for game over transition
+    audioManager.transitionToGameOver();
 
     // Dark red background
     add([rect(GAME_WIDTH, GAME_HEIGHT), pos(0, 0), color(50, 0, 0), z(-10)]);
@@ -588,6 +998,9 @@ function initializeScenes() {
 
   // Main Game Scene
   scene("game", () => {
+    // Use AudioManager for game transition
+    audioManager.transitionToGame();
+
     // Enhanced background with multiple layers
     createBackground();
 
@@ -1374,6 +1787,9 @@ function playerDies(player) {
     updateLives();
     console.log("Lives after death:", gameState.lives);
 
+    // Play death/respawn sound
+    audioManager.playSFX("deathRespawn");
+
     createExplosion(player.pos.x, player.pos.y, [255, 0, 0]);
 
     // Clear projectiles safely
@@ -1427,6 +1843,9 @@ function playerDies(player) {
 function killBoss(boss) {
   gameState.bossDefeated = true;
   updateScore(1000);
+
+  // Play victory fanfare
+  audioManager.playSFX("victoryFanfare");
 
   createExplosion(boss.pos.x, boss.pos.y, [255, 0, 255]);
   destroy(boss);

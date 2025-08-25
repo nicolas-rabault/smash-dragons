@@ -69,6 +69,17 @@ jobs:
           done
           echo "All PNG assets present ✓"
 
+          # Validate that required audio assets exist
+          echo "Validating audio assets..."
+          required_audio=("menu_theme_loop.wav" "magma_ambience_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav")
+          for audio in "${required_audio[@]}"; do
+            if [ ! -f "assets/audio/$audio" ]; then
+              echo "Error: Required audio asset assets/audio/$audio not found"
+              exit 1
+            fi
+          done
+          echo "All audio assets present ✓"
+
       - name: Create static site
         run: |
           echo "Preparing static site for deployment..."
