@@ -33,58 +33,60 @@ jobs:
         run: |
           echo "Checking required game files..."
           ls -la
-          
+
           # Check that required files exist
           if [ ! -f "index.html" ]; then
             echo "Error: index.html not found"
             exit 1
           fi
-          
+
           if [ ! -f "main.js" ]; then
             echo "Error: main.js not found"
             exit 1
           fi
-          
-          if [ ! -f "assets_data_uris.json" ]; then
-            echo "Error: assets_data_uris.json not found"
+
+          if [ ! -d "assets" ]; then
+            echo "Error: assets directory not found"
             exit 1
           fi
-          
+
           echo "All required files present ✓"
-          
+
           # Check file sizes to ensure assets loaded properly
           echo "File sizes:"
-          ls -lh index.html main.js assets_data_uris.json
-          
-          # Validate JSON syntax
-          echo "Validating JSON assets..."
-          if ! cat assets_data_uris.json | python3 -m json.tool > /dev/null; then
-            echo "Error: Invalid JSON in assets_data_uris.json"
-            exit 1
-          fi
-          echo "JSON validation passed ✓"
+          ls -lh index.html main.js
+          echo "Assets directory contents:"
+          ls -lh assets/
+
+          # Validate that required PNG assets exist
+          echo "Validating PNG assets..."
+          required_assets=("hero.png" "dragon.png" "fireball.png" "waterball.png" "platform.png" "background.png" "left.png")
+          for asset in "${required_assets[@]}"; do
+            if [ ! -f "assets/$asset" ]; then
+              echo "Error: Required asset assets/$asset not found"
+              exit 1
+            fi
+          done
+          echo "All PNG assets present ✓"
 
       - name: Create static site
         run: |
           echo "Preparing static site for deployment..."
-          
+
           # Create a clean build directory
           mkdir -p _site
-          
+
           # Copy all necessary files
           cp index.html _site/
           cp main.js _site/
-          cp assets_data_uris.json _site/
           cp README.md _site/
-          
-          # Copy assets directory if it exists (fallback assets)
-          if [ -d "assets" ]; then
-            cp -r assets _site/
-          fi
-          
+
+          # Copy assets directory (required for PNG loading)
+          cp -r assets _site/
+
           # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
-          
+
           # Create a simple 404 page that redirects to the game
           cat > _site/404.html << 'EOF'
           <!DOCTYPE html>
@@ -100,7 +102,7 @@ jobs:
           </body>
           </html>
           EOF
-          
+
           echo "Static site prepared successfully!"
           echo "Contents of _site:"
           ls -la _site/
