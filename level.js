@@ -1,53 +1,121 @@
 /*
- * Level System - Level creation, platforms, background, and camera
- * Handles environment setup and world building
+ * Level System - Scalable level creation, platforms, background, and camera
+ * Handles environment setup and world building for all level types
  */
 
+// Create background based on current level data
 function createBackground() {
-  // Dark cavern background
-  add([rect(LEVEL_WIDTH, GAME_HEIGHT), pos(0, 0), color(15, 10, 30), z(-20)]);
-
-  // Atmospheric layers
-  for (let i = 0; i < 3; i++) {
-    add([
-      rect(LEVEL_WIDTH, 200),
-      pos(0, GAME_HEIGHT - 200 + i * 50),
-      color(25 + i * 15, 10 + i * 5, 40 + i * 10),
-      z(-19 + i),
-    ]);
+  const levelData = LEVEL_DATA[gameState.level];
+  if (!levelData) {
+    console.error(`No level data found for level ${gameState.level}`);
+    return;
   }
 
-  // Lava floor with glow effect
+  const theme = BACKGROUND_THEMES[levelData.background];
+  if (!theme) {
+    console.error(`No background theme found: ${levelData.background}`);
+    return;
+  }
+
+  createThemedBackground(theme, levelData);
+}
+
+// Create themed background based on level type
+function createThemedBackground(theme, levelData) {
+  // Main background
+  add([
+    rect(LEVEL_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(theme.baseColor[0], theme.baseColor[1], theme.baseColor[2]),
+    z(-20),
+  ]);
+
+  // Atmospheric layers
+  theme.layers.forEach((layer, i) => {
+    add([
+      rect(LEVEL_WIDTH, 200),
+      pos(0, GAME_HEIGHT - 200 + layer.offset),
+      color(layer.color[0], layer.color[1], layer.color[2]),
+      z(-19 + i),
+    ]);
+  });
+
+  // Hazard floor (lava, ice, storm clouds, etc.)
   add([
     rect(LEVEL_WIDTH, 120),
     pos(0, GAME_HEIGHT - 120),
-    color(255, 60, 0),
+    color(theme.hazard.color[0], theme.hazard.color[1], theme.hazard.color[2]),
     z(-15),
   ]);
 
-  // Lava glow
+  // Hazard glow effect
   add([
     rect(LEVEL_WIDTH, 40),
     pos(0, GAME_HEIGHT - 160),
-    color(255, 120, 20, 0.7),
+    color(
+      theme.hazard.glowColor[0],
+      theme.hazard.glowColor[1],
+      theme.hazard.glowColor[2],
+      0.7
+    ),
     z(-16),
   ]);
+
+  // Level-specific decorative elements
+  createLevelDecorations(levelData, theme);
 }
 
-function createPlatforms() {
-  const platformData = [
-    { x: 150, y: 520, type: "start" },
-    { x: 350, y: 450, type: "normal" },
-    { x: 550, y: 380, type: "normal" },
-    { x: 750, y: 320, type: "normal" },
-    { x: 950, y: 450, type: "normal" },
-    { x: 1200, y: 380, type: "normal" },
-    { x: 1450, y: 320, type: "normal" },
-    { x: 1700, y: 280, type: "normal" },
-    { x: 1950, y: 450, type: "boss" },
-    { x: 2200, y: 380, type: "end" },
-  ];
+// Create level-specific decorative elements
+function createLevelDecorations(levelData, theme) {
+  switch (levelData.background) {
+    case "lava":
+      createLavaDecorations();
+      break;
+    case "ice":
+      createIceDecorations();
+      break;
+    case "storm":
+      createStormDecorations();
+      break;
+    default:
+      console.log(
+        `No decorations defined for background: ${levelData.background}`
+      );
+      break;
+  }
+}
 
+// Lava level decorations
+function createLavaDecorations() {
+  // Add some lava bubbles or steam effects here in the future
+  console.log("Lava decorations created");
+}
+
+// Ice level decorations
+function createIceDecorations() {
+  // Add some ice crystals or snow effects here in the future
+  console.log("Ice decorations created");
+}
+
+// Storm level decorations
+function createStormDecorations() {
+  // Add some lightning or cloud effects here in the future
+  console.log("Storm decorations created");
+}
+
+// Create platforms based on current level data
+function createPlatforms() {
+  const levelData = LEVEL_DATA[gameState.level];
+  if (!levelData) {
+    console.error(`No level data found for level ${gameState.level}`);
+    return [];
+  }
+
+  return createLevelPlatforms(levelData.platforms);
+}
+
+// Create platforms from level data
+function createLevelPlatforms(platformData) {
   platformData.forEach((data) => {
     const platform = add([
       sprite("platform"),
@@ -61,16 +129,31 @@ function createPlatforms() {
 
     // Add platform glow for special platforms
     if (data.type === "start" || data.type === "boss" || data.type === "end") {
+      const glowColor = getPlatformGlowColor(data.type);
       add([
         rect(120, 10),
         pos(data.x, data.y - 15),
-        color(100, 200, 255, 0.6),
+        color(glowColor[0], glowColor[1], glowColor[2], 0.6),
         z(5),
       ]);
     }
   });
 
   return platformData;
+}
+
+// Get platform glow color based on type
+function getPlatformGlowColor(platformType) {
+  switch (platformType) {
+    case "start":
+      return [100, 255, 100]; // Green for start
+    case "boss":
+      return [255, 100, 100]; // Red for boss
+    case "end":
+      return [100, 200, 255]; // Blue for end
+    default:
+      return [100, 200, 255]; // Default blue
+  }
 }
 
 function setupCamera(player) {

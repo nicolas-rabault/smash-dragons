@@ -24,6 +24,8 @@ function createPlayer() {
       lastShotTime: 0,
       invulnerable: false,
       invulnerabilityTime: 0,
+      currentPowerIndex: 0, // Index of currently selected power
+      unlockedPowers: ["FIREBALL"], // Powers available to player
     },
     "player",
   ]);
@@ -121,18 +123,33 @@ function setupPlayerMovement(player) {
     }
   });
 
-  // Shooting
+  // Shooting with current power
   onKeyPress("space", () => {
     console.log("Space pressed for shooting");
     if (!player.dead && player.canShoot) {
-      spawnFireball(player);
+      playerShoot(player);
     }
   });
 
   onKeyPress("e", () => {
     console.log("E pressed for shooting");
     if (!player.dead && player.canShoot) {
-      spawnFireball(player);
+      playerShoot(player);
+    }
+  });
+
+  // Power cycling
+  onKeyPress("c", () => {
+    console.log("C pressed for power cycling");
+    if (!player.dead) {
+      cyclePower(player);
+    }
+  });
+
+  onKeyPress("x", () => {
+    console.log("X pressed for power cycling (alternative)");
+    if (!player.dead) {
+      cyclePower(player);
     }
   });
 
@@ -214,5 +231,88 @@ function playerDies(player) {
     // Force game over screen on any critical error
     console.log("Force transitioning to game over due to error");
     go("gameOver");
+  }
+}
+
+// Player shooting with current power
+function playerShoot(player) {
+  console.log(
+    "playerShoot called, player:",
+    player.exists(),
+    "canShoot:",
+    player.canShoot
+  );
+
+  const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
+  console.log(
+    "Available powers:",
+    availablePowers.map((p) => p.name)
+  );
+
+  if (availablePowers.length === 0) {
+    console.warn("No powers available to player");
+    return;
+  }
+
+  const currentPower = availablePowers[player.currentPowerIndex];
+  console.log(
+    "Current power index:",
+    player.currentPowerIndex,
+    "Current power:",
+    currentPower?.name
+  );
+
+  if (!currentPower) {
+    console.warn("Invalid power index:", player.currentPowerIndex);
+    return;
+  }
+
+  console.log("Calling spawnPower with:", currentPower.id);
+  // Find the power type key that matches this id
+  const powerTypeKey = Object.keys(POWER_TYPES).find(
+    (key) => POWER_TYPES[key].id === currentPower.id
+  );
+  console.log("Power type key found:", powerTypeKey);
+  spawnPower(player, powerTypeKey);
+}
+
+// Cycle through available powers
+function cyclePower(player) {
+  const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
+  if (availablePowers.length <= 1) {
+    console.log("Only one power available, no cycling needed");
+    return;
+  }
+
+  // Cycle to next power
+  player.currentPowerIndex =
+    (player.currentPowerIndex + 1) % availablePowers.length;
+  const newPower = availablePowers[player.currentPowerIndex];
+
+  // Show power change notification
+  add([
+    text(`Power: ${newPower.name}`, {
+      size: 18,
+      font: "sink",
+    }),
+    color(255, 255, 0),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT - 100),
+    anchor("center"),
+    fixed(),
+    z(150),
+    lifespan(2, { fade: 1 }),
+  ]);
+
+  console.log(`Power switched to: ${newPower.name}`);
+}
+
+// Update player's available powers (called when boss is defeated)
+function updatePlayerPowers(player) {
+  const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
+  player.unlockedPowers = availablePowers.map((power) => power.id);
+
+  // Keep current power index valid
+  if (player.currentPowerIndex >= availablePowers.length) {
+    player.currentPowerIndex = 0;
   }
 }

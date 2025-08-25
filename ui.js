@@ -42,6 +42,33 @@ function createUI() {
     z(100),
     "levelText",
   ]);
+
+  // Current power display
+  const currentPower = PLAYER_PROGRESSION.getAvailablePowers()[0];
+  add([
+    text(`Power: ${currentPower ? currentPower.name : "None"}`, {
+      size: 18,
+      font: "sink",
+    }),
+    color(255, 255, 0),
+    pos(20, 110),
+    fixed(),
+    z(100),
+    "powerText",
+  ]);
+
+  // Power cycling instructions
+  add([
+    text("C/X: Cycle Powers", {
+      size: 14,
+      font: "sink",
+    }),
+    color(180, 180, 180),
+    pos(20, 140),
+    fixed(),
+    z(100),
+    "powerInstructions",
+  ]);
 }
 
 function updateScore(points) {
@@ -54,6 +81,23 @@ function updateScore(points) {
 function updateLives() {
   if (get("livesText")[0]) {
     get("livesText")[0].text = `Lives: ${gameState.lives}`;
+  }
+}
+
+function updateCurrentPowerDisplay(player) {
+  const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
+  const currentPower = availablePowers[player.currentPowerIndex];
+
+  if (get("powerText")[0]) {
+    get("powerText")[0].text = `Power: ${
+      currentPower ? currentPower.name : "None"
+    }`;
+  }
+
+  // Update power cycling instructions visibility
+  const powerInstructions = get("powerInstructions")[0];
+  if (powerInstructions) {
+    powerInstructions.hidden = availablePowers.length <= 1;
   }
 }
 
@@ -76,7 +120,13 @@ function setupMobileControls(player) {
     return;
   }
 
-  let mobile = { left: false, right: false, jump: false, fire: false };
+  let mobile = {
+    left: false,
+    right: false,
+    jump: false,
+    fire: false,
+    cyclePower: false,
+  };
   let pointerDown = false;
 
   // Get screen dimensions and calculate button properties
@@ -111,6 +161,10 @@ function setupMobileControls(player) {
       x < screenWidth - buttonSpacing * 2 - buttonSize &&
       y > bottom;
     mobile.fire = x >= screenWidth - buttonSpacing - buttonSize && y > bottom;
+    mobile.cyclePower =
+      x >= screenWidth - buttonSpacing * 3 - buttonSize * 3 &&
+      x < screenWidth - buttonSpacing * 3 - buttonSize * 2 &&
+      y > bottom;
   }
 
   onMouseDown(() => {
@@ -164,7 +218,12 @@ function setupMobileControls(player) {
     }
 
     if (mobile.fire && player.canShoot) {
-      spawnFireball(player);
+      playerShoot(player);
+    }
+
+    if (mobile.cyclePower) {
+      cyclePower(player);
+      mobile.cyclePower = false; // Prevent rapid cycling
     }
   });
 
@@ -227,6 +286,38 @@ function setupMobileControls(player) {
       screenHeight - buttonSize / 2 - bottomMargin
     ),
     scale(-buttonSize * 0.012, buttonSize * 0.012), // Flip horizontally for right arrow
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(111),
+    "mobileControl",
+  ]);
+
+  // Power cycle button (only show if multiple powers available)
+  const powerBtn = add([
+    rect(buttonSize, buttonSize),
+    pos(
+      screenWidth - buttonSpacing * 3 - buttonSize * 3,
+      screenHeight - buttonSize - bottomMargin
+    ),
+    color(0, 0, 0, 0.3),
+    outline(2, rgb(255, 255, 255, 0.6)),
+    area(),
+    fixed(),
+    z(110),
+    "mobileControl",
+    "powerBtn",
+  ]);
+
+  add([
+    text("C", {
+      size: buttonSize * 0.5,
+      font: "sink",
+    }),
+    pos(
+      screenWidth - buttonSpacing * 3 - buttonSize * 3 + buttonSize / 2,
+      screenHeight - buttonSize / 2 - bottomMargin
+    ),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
@@ -331,8 +422,13 @@ function setupMobileControls(player) {
   fireBtn.onClick(() => {
     console.log("Fire button clicked");
     if (player.canShoot) {
-      spawnFireball(player);
+      playerShoot(player);
     }
+  });
+
+  powerBtn.onClick(() => {
+    console.log("Power cycle button clicked");
+    cyclePower(player);
   });
 
   // Add visual feedback for button presses
