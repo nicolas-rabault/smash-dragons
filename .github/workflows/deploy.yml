@@ -45,6 +45,15 @@ jobs:
             exit 1
           fi
 
+          # Check that all modular JavaScript files exist
+          required_js_files=("gameData.js" "level.js" "powers.js" "character.js" "boss.js" "ui.js")
+          for js_file in "${required_js_files[@]}"; do
+            if [ ! -f "$js_file" ]; then
+              echo "Error: Required JavaScript file $js_file not found"
+              exit 1
+            fi
+          done
+
           if [ ! -d "assets" ]; then
             echo "Error: assets directory not found"
             exit 1
@@ -91,6 +100,15 @@ jobs:
           cp index.html _site/
           cp main.js _site/
           cp README.md _site/
+          
+          # Copy all modular JavaScript files
+          cp gameData.js _site/
+          cp level.js _site/
+          cp powers.js _site/
+          cp character.js _site/
+          cp boss.js _site/
+          cp ui.js _site/
+          cp ARCHITECTURE.md _site/
 
           # Copy assets directory (required for PNG loading)
           cp -r assets _site/
