@@ -591,40 +591,6 @@ function loadFallbackAssets() {
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
   );
 
-  // Fallback animated background frames (simple colored rectangles)
-  loadSprite(
-    "level1BackgroundFrame1",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame2",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame3",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame4",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame5",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame6",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame7",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1BackgroundFrame8",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-
   // Fallback mobile control icons (simple shapes)
   loadSprite(
     "leftArrow",
@@ -1126,6 +1092,9 @@ function initializeScenes() {
     setupPowerCollisions(player);
     setupBossCollisions();
     setupCamera(player);
+
+    // Initialize power selector UI
+    updatePowerSelector(player);
 
     // Mobile controls
     setupMobileControls(player);

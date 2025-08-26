@@ -43,32 +43,8 @@ function createUI() {
     "levelText",
   ]);
 
-  // Current power display
-  const currentPower = PLAYER_PROGRESSION.getAvailablePowers()[0];
-  add([
-    text(`Power: ${currentPower ? currentPower.name : "None"}`, {
-      size: 18,
-      font: "sink",
-    }),
-    color(255, 255, 0),
-    pos(20, 110),
-    fixed(),
-    z(100),
-    "powerText",
-  ]);
-
-  // Power cycling instructions
-  add([
-    text("C/X: Cycle Powers", {
-      size: 14,
-      font: "sink",
-    }),
-    color(180, 180, 180),
-    pos(20, 140),
-    fixed(),
-    z(100),
-    "powerInstructions",
-  ]);
+  // Visual power selector
+  createPowerSelector();
 }
 
 function updateScore(points) {
@@ -84,20 +60,67 @@ function updateLives() {
   }
 }
 
-function updateCurrentPowerDisplay(player) {
+// Create visual power selector with icons
+function createPowerSelector() {
+  // Initial setup - will be populated when player is available
+  console.log("Visual power selector system initialized");
+}
+
+// Update the visual power selector when powers change
+function updatePowerSelector(player) {
+  // Remove existing power selector elements
+  get("powerIcon").forEach((icon) => destroy(icon));
+  get("powerSelector").forEach((selector) => destroy(selector));
+  
   const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
-  const currentPower = availablePowers[player.currentPowerIndex];
-
-  if (get("powerText")[0]) {
-    get("powerText")[0].text = `Power: ${
-      currentPower ? currentPower.name : "None"
-    }`;
-  }
-
-  // Update power cycling instructions visibility
-  const powerInstructions = get("powerInstructions")[0];
-  if (powerInstructions) {
-    powerInstructions.hidden = availablePowers.length <= 1;
+  if (availablePowers.length === 0) return;
+  
+  const baseX = GAME_WIDTH - 60;
+  const baseY = 20;
+  const iconSize = 32;
+  const spacing = 10;
+  
+  // Create power icons
+  availablePowers.forEach((power, index) => {
+    const posX = baseX - (index * (iconSize + spacing));
+    const isSelected = index === player.currentPowerIndex;
+    
+    // Background for icon (selection indicator)
+    add([
+      rect(iconSize + 4, iconSize + 4),
+      pos(posX - 2, baseY - 2),
+      color(isSelected ? 255 : 100, isSelected ? 0 : 100, isSelected ? 0 : 100),
+      outline(2, rgb(isSelected ? 255 : 150, isSelected ? 255 : 150, isSelected ? 255 : 150)),
+      fixed(),
+      z(98),
+      "powerSelector",
+    ]);
+    
+    // Power icon
+    add([
+      sprite(power.sprite),
+      pos(posX, baseY),
+      scale(iconSize / 64), // Assuming sprites are roughly 64px
+      fixed(),
+      z(99),
+      "powerIcon",
+    ]);
+  });
+  
+  // Instructions text (only show if multiple powers)
+  if (availablePowers.length > 1) {
+    add([
+      text("C/X: Switch", {
+        size: 12,
+        font: "sink",
+      }),
+      color(180, 180, 180),
+      pos(baseX - (availablePowers.length * (iconSize + spacing)) + iconSize, baseY + iconSize + 5),
+      anchor("left"),
+      fixed(),
+      z(100),
+      "powerSelector",
+    ]);
   }
 }
 

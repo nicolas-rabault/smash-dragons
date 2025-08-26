@@ -247,7 +247,7 @@ function onBossDefeated(boss, defeatingPowerType) {
   const player = get("player")[0];
   if (player) {
     updatePlayerPowers(player);
-    updateCurrentPowerDisplay(player);
+    updatePowerSelector(player);
   }
 
   // Call the original boss defeat function

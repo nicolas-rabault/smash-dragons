@@ -285,19 +285,8 @@ function cyclePower(player) {
     (player.currentPowerIndex + 1) % availablePowers.length;
   const newPower = availablePowers[player.currentPowerIndex];
 
-  // Show power change notification
-  add([
-    text(`Power: ${newPower.name}`, {
-      size: 18,
-      font: "sink",
-    }),
-    color(255, 255, 0),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT - 100),
-    anchor("center"),
-    fixed(),
-    z(150),
-    lifespan(2, { fade: 1 }),
-  ]);
+  // Update visual power selector
+  updatePowerSelector(player);
 
   console.log(`Power switched to: ${newPower.name}`);
 }
@@ -311,4 +300,7 @@ function updatePlayerPowers(player) {
   if (player.currentPowerIndex >= availablePowers.length) {
     player.currentPowerIndex = 0;
   }
+  
+  // Update visual power selector
+  updatePowerSelector(player);
 }
