@@ -28,25 +28,27 @@ function createThemedBackground(theme, levelData) {
 
     // Check if the sprite is available
     try {
-              // Scale the background to cover the full screen height
-        const scaleY = GAME_HEIGHT / 2048; // Scale to fit screen height (600/2048)
-        const scaleX = scaleY; // Keep aspect ratio square
-        
-        // Calculate how many background tiles we need to cover the level width
-        const tileWidth = 2048 * scaleX; // Width of one scaled tile
-        const numTiles = Math.ceil(LEVEL_WIDTH / tileWidth) + 1; // Add extra tile for safety
+      // Scale the background to cover the full screen height
+      const scaleY = GAME_HEIGHT / 512; // Scale to fit screen height (600/2048)
+      const scaleX = scaleY; // Keep aspect ratio square
 
-        console.log(`Creating ${numTiles} background tiles to cover level width, scale: ${scaleX}`);
+      // Calculate how many background tiles we need to cover the level width
+      const tileWidth = 2048 * scaleX; // Width of one scaled tile
+      const numTiles = Math.ceil(LEVEL_WIDTH / tileWidth) + 1; // Add extra tile for safety
 
-        // Create multiple background tiles to cover the entire level width
-        for (let i = 0; i < numTiles; i++) {
-          const bgSprite = add([
-            sprite("level1Background"),
-            pos(i * tileWidth, 0),
-            scale(scaleX, scaleY), // Scale to cover full screen height
-            z(-20),
-          ]);
-        }
+      console.log(
+        `Creating ${numTiles} background tiles to cover level width, scale: ${scaleX}`
+      );
+
+      // Create multiple background tiles to cover the entire level width
+      for (let i = 0; i < numTiles; i++) {
+        const bgSprite = add([
+          sprite("level1Background"),
+          pos(i * tileWidth, 0),
+          scale(scaleX, scaleY), // Scale to cover full screen height
+          z(-20),
+        ]);
+      }
       console.log("✅ Successfully created tiled level1 background");
     } catch (error) {
       console.error("❌ Failed to create level1 background sprite:", error);
