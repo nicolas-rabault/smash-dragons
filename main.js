@@ -70,6 +70,11 @@ class AudioManager {
         "./assets/audio/victory_fanfare.wav",
         "sfx"
       );
+      await this.loadSound(
+        "fireballExplosion",
+        "./assets/audio/fireball_explosion.wav",
+        "sfx"
+      );
 
       this.isInitialized = true;
       console.log("AudioManager initialized successfully");

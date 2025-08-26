@@ -17,7 +17,7 @@ const POWER_TYPES = {
       [255, 100, 0],
     ],
     trailColors: [255, 150, 0, 255],
-    sound: null, // Add when available
+    sound: "fireballExplosion", // Explosion sound effect
     unlocked: true, // Player starts with this
   },
   WATERBALL: {

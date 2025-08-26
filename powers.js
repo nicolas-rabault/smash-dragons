@@ -105,6 +105,11 @@ function createPowerExplosion(x, y, powerType = "FIREBALL") {
         [255, 100, 0],
       ];
 
+  // Play explosion sound if available
+  if (powerData && powerData.sound && typeof audioManager !== 'undefined') {
+    audioManager.playSFX(powerData.sound);
+  }
+
   shake(15);
 
   // Main explosion burst - larger particles
