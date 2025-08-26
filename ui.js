@@ -89,7 +89,7 @@ function updatePowerSelector(player) {
     add([
       rect(iconSize + 4, iconSize + 4),
       pos(posX - 2, baseY - 2),
-      color(isSelected ? 255 : 100, isSelected ? 0 : 100, isSelected ? 0 : 100),
+      color(isSelected ? 200 : 100, isSelected ? 200 : 100, isSelected ? 200 : 100), // Light grey for selected
       outline(
         2,
         rgb(
@@ -103,11 +103,12 @@ function updatePowerSelector(player) {
       "powerSelector",
     ]);
 
-    // Power icon
+    // Power icon - scale to fit the square properly
     add([
       sprite(power.sprite),
-      pos(posX, baseY),
-      scale(iconSize / 64), // Assuming sprites are roughly 64px
+      pos(posX + iconSize / 2, baseY + iconSize / 2), // Center in the square
+      scale(iconSize / 32), // Scale to fit 32px square (assuming sprites are 32px)
+      anchor("center"), // Center the sprite
       fixed(),
       z(99),
       "powerIcon",

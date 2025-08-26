@@ -398,14 +398,14 @@ function createAnimatedBackground() {
 
     // Background frame names
     const frameNames = [
-      "level1BackgroundFrame1",
-      "level1BackgroundFrame2",
-      "level1BackgroundFrame3",
-      "level1BackgroundFrame4",
-      "level1BackgroundFrame5",
-      "level1BackgroundFrame6",
-      "level1BackgroundFrame7",
       "level1BackgroundFrame8",
+      "level1BackgroundFrame7",
+      "level1BackgroundFrame6",
+      "level1BackgroundFrame5",
+      "level1BackgroundFrame4",
+      "level1BackgroundFrame3",
+      "level1BackgroundFrame2",
+      "level1BackgroundFrame1",
     ];
 
     // Animation settings

@@ -1085,7 +1085,7 @@ function initializeScenes() {
     setupPlayerMovement(player);
     setupPowerCollisions(player);
     setupBossCollisions();
-        setupCamera(player);
+    setupCamera(player);
 
     // Initialize power selector UI
     updatePowerSelector(player);
