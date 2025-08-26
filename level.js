@@ -24,14 +24,29 @@ function createBackground() {
 function createThemedBackground(theme, levelData) {
   // Use level1 background image for level 1, colored rectangles for other levels
   if (gameState.level === 1) {
-    // Use the level1 background image
-    add([
-      sprite("level1Background"),
-      pos(0, 0),
-      scale(LEVEL_WIDTH / 800, GAME_HEIGHT / 600), // Scale to fit level width
-      z(-20),
-    ]);
-    console.log("Using level1 background image");
+    console.log("Attempting to use level1 background image...");
+    
+    // Check if the sprite is available
+    try {
+      // Use the level1 background image
+      const bgSprite = add([
+        sprite("level1Background"),
+        pos(0, 0),
+        scale(LEVEL_WIDTH / 800, GAME_HEIGHT / 600), // Scale to fit level width
+        z(-20),
+      ]);
+      console.log("✅ Successfully created level1 background sprite");
+    } catch (error) {
+      console.error("❌ Failed to create level1 background sprite:", error);
+      // Fallback to colored background
+      add([
+        rect(LEVEL_WIDTH, GAME_HEIGHT),
+        pos(0, 0),
+        color(theme.baseColor[0], theme.baseColor[1], theme.baseColor[2]),
+        z(-20),
+      ]);
+      console.log("Using colored background fallback for level 1");
+    }
   } else {
     // Fallback to colored background for other levels
     add([

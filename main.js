@@ -506,6 +506,7 @@ async function loadGameAssets() {
     loadSprite("waterball", "./assets/waterball.png");
     loadSprite("platform", "./assets/platform.png");
     loadSprite("level1Background", "./assets/level1_background.png");
+    console.log("Loading level1 background sprite...");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
@@ -544,6 +545,10 @@ function loadFallbackAssets() {
   );
   loadSprite(
     "platform",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1Background",
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
   );
 
