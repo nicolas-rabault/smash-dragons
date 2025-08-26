@@ -485,13 +485,14 @@ function createAnimatedBackground() {
     function updateParallaxEffect() {
       const cameraX = camPos().x;
 
-      // Background parallax (moves slowest)
-      const backgroundParallaxSpeed = 0.2; // Background moves very slowly
+      // Background parallax (moves slowest, opposite to camera direction)
+      const backgroundParallaxSpeed = 0.1; // Reduced speed - background moves very slowly
       backgroundTiles.forEach((tile, index) => {
         if (tile.exists()) {
           const baseX = index * tileWidth;
+          // Add parallax offset to move opposite to camera direction
           const parallaxOffset = cameraX * backgroundParallaxSpeed;
-          const newX = baseX - parallaxOffset;
+          const newX = baseX + parallaxOffset;
 
           // Simple wrapping logic
           if (newX < -tileWidth) {
@@ -504,15 +505,16 @@ function createAnimatedBackground() {
         }
       });
 
-      // Foreground parallax (moves at medium speed, behind platforms)
+      // Foreground parallax (moves at medium speed, opposite to camera direction)
       if (foregroundTiles.length > 0) {
-        const foregroundParallaxSpeed = 0.6; // Foreground moves faster than background but slower than camera
+        const foregroundParallaxSpeed = 0.3; // Reduced speed - foreground moves slower than before
 
         foregroundTiles.forEach((tile, index) => {
           if (tile.exists()) {
             const baseX = index * tileWidth;
+            // Add parallax offset to move opposite to camera direction
             const parallaxOffset = cameraX * foregroundParallaxSpeed;
-            const newX = baseX - parallaxOffset;
+            const newX = baseX + parallaxOffset;
 
             // Simple wrapping logic
             if (newX < -tileWidth) {
@@ -539,7 +541,7 @@ function createAnimatedBackground() {
         `🔍 Debug: Background tiles: ${backgroundTiles.length}, Foreground tiles: ${foregroundTiles.length}`
       );
       console.log(
-        "🔍 Parallax speeds - Background: 0.2, Foreground: 0.6, Platforms: 1.0 (normal)"
+        "🔍 Parallax speeds - Background: 0.1, Foreground: 0.3, Platforms: 1.0 (normal)"
       );
       console.log(
         "🔍 Z-layers - Background: -20, Foreground: -5, Platforms: 0+"
