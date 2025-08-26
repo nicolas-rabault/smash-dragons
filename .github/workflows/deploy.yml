@@ -186,6 +186,7 @@ jobs:
           echo "The enhanced game includes:"
           echo "✓ High-quality sprite assets"
           echo "✓ Animated background (12 FPS lava cavern)"
+          echo "✓ Parallax foreground effect"
           echo "✓ Enhanced gameplay mechanics"
           echo "✓ Mobile touch controls"
           echo "✓ Scoring system and multiple lives"

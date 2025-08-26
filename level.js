@@ -427,17 +427,40 @@ function createAnimatedBackground() {
       backgroundTiles.push(bgSprite);
     }
 
-    // Create parallax foreground tiles
+    // Create parallax foreground tiles (behind platforms)
     const foregroundTiles = [];
-    for (let i = 0; i < numTiles; i++) {
-      const fgSprite = add([
-        sprite("level1Foreground"),
-        pos(i * tileWidth, 0),
-        scale(scaleX, scaleY),
-        z(-10), // Higher z-index than background but lower than game elements
-        "parallaxForeground",
-      ]);
-      foregroundTiles.push(fgSprite);
+    try {
+      // Test if the sprite loads correctly
+      console.log("🔍 Testing foreground sprite loading...");
+
+      for (let i = 0; i < numTiles; i++) {
+        const fgSprite = add([
+          sprite("level1Foreground"),
+          pos(i * tileWidth, 0),
+          scale(scaleX, scaleY),
+          z(-5), // Behind platforms but above background
+          "parallaxForeground",
+        ]);
+        foregroundTiles.push(fgSprite);
+      }
+      console.log(`✅ Created ${foregroundTiles.length} foreground tiles`);
+    } catch (foregroundError) {
+      console.error("❌ Failed to create foreground tiles:", foregroundError);
+      // Create a simple colored rectangle as fallback to test visibility
+      console.log("🔍 Creating fallback foreground for testing...");
+      for (let i = 0; i < numTiles; i++) {
+        const fallbackFg = add([
+          rect(tileWidth, GAME_HEIGHT),
+          pos(i * tileWidth, 0),
+          color(255, 0, 0, 0.3), // Semi-transparent red for testing
+          z(-5),
+          "parallaxForeground",
+        ]);
+        foregroundTiles.push(fallbackFg);
+      }
+      console.log(
+        `✅ Created ${foregroundTiles.length} fallback foreground tiles`
+      );
     }
 
     // Animation update function
@@ -458,30 +481,69 @@ function createAnimatedBackground() {
       }
     }
 
-    // Parallax effect update function
+    // Parallax effect update function for both background and foreground
     function updateParallaxEffect() {
       const cameraX = camPos().x;
-      const parallaxSpeed = 0.5; // Foreground moves slower than camera for parallax effect
 
-      foregroundTiles.forEach((tile, index) => {
+      // Background parallax (moves slowest)
+      const backgroundParallaxSpeed = 0.2; // Background moves very slowly
+      backgroundTiles.forEach((tile, index) => {
         if (tile.exists()) {
-          // Calculate parallax position based on camera
-          const parallaxX = index * tileWidth - cameraX * parallaxSpeed;
+          const baseX = index * tileWidth;
+          const parallaxOffset = cameraX * backgroundParallaxSpeed;
+          const newX = baseX - parallaxOffset;
 
-          // Wrap around when tiles go off-screen
-          const wrappedX = parallaxX % (numTiles * tileWidth);
-          const finalX =
-            wrappedX < 0 ? wrappedX + numTiles * tileWidth : wrappedX;
-
-          tile.pos.x = finalX;
+          // Simple wrapping logic
+          if (newX < -tileWidth) {
+            tile.pos.x = newX + numTiles * tileWidth;
+          } else if (newX > LEVEL_WIDTH + tileWidth) {
+            tile.pos.x = newX - numTiles * tileWidth;
+          } else {
+            tile.pos.x = newX;
+          }
         }
       });
+
+      // Foreground parallax (moves at medium speed, behind platforms)
+      if (foregroundTiles.length > 0) {
+        const foregroundParallaxSpeed = 0.6; // Foreground moves faster than background but slower than camera
+
+        foregroundTiles.forEach((tile, index) => {
+          if (tile.exists()) {
+            const baseX = index * tileWidth;
+            const parallaxOffset = cameraX * foregroundParallaxSpeed;
+            const newX = baseX - parallaxOffset;
+
+            // Simple wrapping logic
+            if (newX < -tileWidth) {
+              tile.pos.x = newX + numTiles * tileWidth;
+            } else if (newX > LEVEL_WIDTH + tileWidth) {
+              tile.pos.x = newX - numTiles * tileWidth;
+            } else {
+              tile.pos.x = newX;
+            }
+          }
+        });
+      }
     }
 
     // Add the animation update to the game loop
     onUpdate(() => {
       updateBackgroundAnimation();
       updateParallaxEffect();
+    });
+
+    // Debug: Log parallax system info after a short delay
+    wait(1, () => {
+      console.log(
+        `🔍 Debug: Background tiles: ${backgroundTiles.length}, Foreground tiles: ${foregroundTiles.length}`
+      );
+      console.log(
+        "🔍 Parallax speeds - Background: 0.2, Foreground: 0.6, Platforms: 1.0 (normal)"
+      );
+      console.log(
+        "🔍 Z-layers - Background: -20, Foreground: -5, Platforms: 0+"
+      );
     });
 
     console.log(

@@ -200,20 +200,71 @@ function killBoss(boss) {
       font: "sink",
     }),
     color(255, 255, 0),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 80),
     anchor("center"),
     fixed(),
     z(200),
   ]);
 
-  // For now, always restart level 1 with new powers
+  // Display the newly acquired power
+  const newPowerData = POWER_TYPES[bossData.rewardPower];
+  if (newPowerData) {
+    // Power acquisition announcement
+    add([
+      text(`NEW POWER ACQUIRED!`, {
+        size: 24,
+        font: "sink",
+      }),
+      color(100, 255, 100),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 30),
+      anchor("center"),
+      fixed(),
+      z(200),
+    ]);
+
+    // Power name
+    add([
+      text(newPowerData.name, {
+        size: 28,
+        font: "sink",
+      }),
+      color(255, 255, 255),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10),
+      anchor("center"),
+      fixed(),
+      z(200),
+    ]);
+
+    // Large power icon
+    add([
+      sprite(newPowerData.sprite),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60),
+      scale(2.0), // Large, prominent display
+      anchor("center"),
+      fixed(),
+      z(201),
+    ]);
+
+    // Glowing effect around the power icon
+    add([
+      rect(80, 80),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60),
+      anchor("center"),
+      color(100, 255, 100, 0.3),
+      outline(3, rgb(100, 255, 100, 0.8)),
+      fixed(),
+      z(200),
+    ]);
+  }
+
+  // Instructions
   add([
     text("Press SPACE to restart Level 1 with new power!", {
-      size: 20,
+      size: 18,
       font: "sink",
     }),
     color(255, 255, 255),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
     anchor("center"),
     fixed(),
     z(200),
