@@ -158,9 +158,9 @@ class AudioManager {
 
   // Play ambience (stops current ambience first)
   playAmbience(id, options = {}) {
-    if (!this.isInitialized || !this.userInteracted || this.isMuted) {
+    if (!this.isInitialized || this.isMuted) {
       console.log(
-        `Cannot play ambience ${id}: initialized=${this.isInitialized}, userInteracted=${this.userInteracted}, muted=${this.isMuted}`
+        `Cannot play ambience ${id}: initialized=${this.isInitialized}, muted=${this.isMuted}`
       );
       return;
     }
