@@ -25,14 +25,14 @@ function createThemedBackground(theme, levelData) {
   // Use level1 background image for level 1, colored rectangles for other levels
   if (gameState.level === 1) {
     console.log("Attempting to use level1 background image...");
-    
+
     // Check if the sprite is available
     try {
       // Use the level1 background image
       const bgSprite = add([
         sprite("level1Background"),
         pos(0, 0),
-        scale(LEVEL_WIDTH / 800, GAME_HEIGHT / 600), // Scale to fit level width
+        scale(LEVEL_WIDTH / 2048, GAME_HEIGHT / 2048), // Scale to fit level width for 2048x2048 image
         z(-20),
       ]);
       console.log("✅ Successfully created level1 background sprite");
@@ -58,36 +58,41 @@ function createThemedBackground(theme, levelData) {
     console.log("Using colored background for level", gameState.level);
   }
 
-  // Atmospheric layers
-  theme.layers.forEach((layer, i) => {
+  // Only draw colored layers if we don't have a proper background image
+  if (gameState.level !== 1) {
+    // Atmospheric layers
+    theme.layers.forEach((layer, i) => {
+      add([
+        rect(LEVEL_WIDTH, 200),
+        pos(0, GAME_HEIGHT - 200 + layer.offset),
+        color(layer.color[0], layer.color[1], layer.color[2]),
+        z(-19 + i),
+      ]);
+    });
+
+    // Hazard floor (lava, ice, storm clouds, etc.)
     add([
-      rect(LEVEL_WIDTH, 200),
-      pos(0, GAME_HEIGHT - 200 + layer.offset),
-      color(layer.color[0], layer.color[1], layer.color[2]),
-      z(-19 + i),
+      rect(LEVEL_WIDTH, 120),
+      pos(0, GAME_HEIGHT - 120),
+      color(theme.hazard.color[0], theme.hazard.color[1], theme.hazard.color[2]),
+      z(-15),
     ]);
-  });
 
-  // Hazard floor (lava, ice, storm clouds, etc.)
-  add([
-    rect(LEVEL_WIDTH, 120),
-    pos(0, GAME_HEIGHT - 120),
-    color(theme.hazard.color[0], theme.hazard.color[1], theme.hazard.color[2]),
-    z(-15),
-  ]);
-
-  // Hazard glow effect
-  add([
-    rect(LEVEL_WIDTH, 40),
-    pos(0, GAME_HEIGHT - 160),
-    color(
-      theme.hazard.glowColor[0],
-      theme.hazard.glowColor[1],
-      theme.hazard.glowColor[2],
-      0.7
-    ),
-    z(-16),
-  ]);
+    // Hazard glow effect
+    add([
+      rect(LEVEL_WIDTH, 40),
+      pos(0, GAME_HEIGHT - 160),
+      color(
+        theme.hazard.glowColor[0],
+        theme.hazard.glowColor[1],
+        theme.hazard.glowColor[2],
+        0.7
+      ),
+      z(-16),
+    ]);
+  } else {
+    console.log("Skipping colored layers for level 1 - using background image instead");
+  }
 
   // Level-specific decorative elements
   createLevelDecorations(levelData, theme);
