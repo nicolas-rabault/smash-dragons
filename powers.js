@@ -106,7 +106,7 @@ function createPowerExplosion(x, y, powerType = "FIREBALL") {
       ];
 
   // Play explosion sound if available
-  if (powerData && powerData.sound && typeof audioManager !== 'undefined') {
+  if (powerData && powerData.sound && typeof audioManager !== "undefined") {
     audioManager.playSFX(powerData.sound);
   }
 

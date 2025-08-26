@@ -32,7 +32,7 @@ const POWER_TYPES = {
       [0, 100, 255],
     ],
     trailColors: [0, 150, 255, 255],
-    sound: null, // Add when available
+    sound: "waterballExplosion", // Explosion sound effect
     unlocked: false, // Obtained from Water Dragon boss
   },
   ICEBALL: {

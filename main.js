@@ -75,6 +75,11 @@ class AudioManager {
         "./assets/audio/fireball_explosion.wav",
         "sfx"
       );
+      await this.loadSound(
+        "waterballExplosion",
+        "./assets/audio/waterball_explosion.wav",
+        "sfx"
+      );
 
       this.isInitialized = true;
       console.log("AudioManager initialized successfully");

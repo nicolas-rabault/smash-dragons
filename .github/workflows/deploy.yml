@@ -80,7 +80,7 @@ jobs:
 
           # Validate that required audio assets exist
           echo "Validating audio assets..."
-          required_audio=("menu_theme_loop.wav" "magma_ambience_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav")
+          required_audio=("menu_theme_loop.wav" "magma_ambience_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav" "waterball_explosion.wav")
           for audio in "${required_audio[@]}"; do
             if [ ! -f "assets/audio/$audio" ]; then
               echo "Error: Required audio asset assets/audio/$audio not found"
