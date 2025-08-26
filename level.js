@@ -32,7 +32,7 @@ function createThemedBackground(theme, levelData) {
       const bgSprite = add([
         sprite("level1Background"),
         pos(0, 0),
-        scale(GAME_WIDTH / 2048, GAME_HEIGHT / 2048), // Scale to fit screen dimensions (800x600)
+        scale(GAME_HEIGHT / 2048, GAME_HEIGHT / 2048), // Scale to fit screen height
         z(-20),
       ]);
       console.log("✅ Successfully created level1 background sprite");
@@ -166,16 +166,7 @@ function createLevelPlatforms(platformData) {
       { platformType: data.type },
     ]);
 
-    // Add platform glow for special platforms
-    if (data.type === "start" || data.type === "boss" || data.type === "end") {
-      const glowColor = getPlatformGlowColor(data.type);
-      add([
-        rect(120, 10),
-        pos(data.x, data.y - 15),
-        color(glowColor[0], glowColor[1], glowColor[2], 0.6),
-        z(5),
-      ]);
-    }
+    // Platform glow effects removed - they were causing green squares
   });
 
   return platformData;
