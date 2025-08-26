@@ -32,7 +32,7 @@ function createThemedBackground(theme, levelData) {
       const bgSprite = add([
         sprite("level1Background"),
         pos(0, 0),
-        scale(LEVEL_WIDTH / 2048, GAME_HEIGHT / 2048), // Scale to fit level width for 2048x2048 image
+        scale(GAME_WIDTH / 2048, GAME_HEIGHT / 2048), // Scale to fit screen dimensions (800x600)
         z(-20),
       ]);
       console.log("✅ Successfully created level1 background sprite");
@@ -74,7 +74,11 @@ function createThemedBackground(theme, levelData) {
     add([
       rect(LEVEL_WIDTH, 120),
       pos(0, GAME_HEIGHT - 120),
-      color(theme.hazard.color[0], theme.hazard.color[1], theme.hazard.color[2]),
+      color(
+        theme.hazard.color[0],
+        theme.hazard.color[1],
+        theme.hazard.color[2]
+      ),
       z(-15),
     ]);
 
@@ -91,7 +95,9 @@ function createThemedBackground(theme, levelData) {
       z(-16),
     ]);
   } else {
-    console.log("Skipping colored layers for level 1 - using background image instead");
+    console.log(
+      "Skipping colored layers for level 1 - using background image instead"
+    );
   }
 
   // Level-specific decorative elements
