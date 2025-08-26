@@ -505,7 +505,7 @@ async function loadGameAssets() {
     loadSprite("fireball", "./assets/fireball.png");
     loadSprite("waterball", "./assets/waterball.png");
     loadSprite("platform", "./assets/platform.png");
-    loadSprite("background", "./assets/background.png");
+    loadSprite("level1Background", "./assets/level1_background.png");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");

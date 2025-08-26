@@ -22,13 +22,26 @@ function createBackground() {
 
 // Create themed background based on level type
 function createThemedBackground(theme, levelData) {
-  // Main background
-  add([
-    rect(LEVEL_WIDTH, GAME_HEIGHT),
-    pos(0, 0),
-    color(theme.baseColor[0], theme.baseColor[1], theme.baseColor[2]),
-    z(-20),
-  ]);
+  // Use level1 background image for level 1, colored rectangles for other levels
+  if (gameState.level === 1) {
+    // Use the level1 background image
+    add([
+      sprite("level1Background"),
+      pos(0, 0),
+      scale(LEVEL_WIDTH / 800, GAME_HEIGHT / 600), // Scale to fit level width
+      z(-20),
+    ]);
+    console.log("Using level1 background image");
+  } else {
+    // Fallback to colored background for other levels
+    add([
+      rect(LEVEL_WIDTH, GAME_HEIGHT),
+      pos(0, 0),
+      color(theme.baseColor[0], theme.baseColor[1], theme.baseColor[2]),
+      z(-20),
+    ]);
+    console.log("Using colored background for level", gameState.level);
+  }
 
   // Atmospheric layers
   theme.layers.forEach((layer, i) => {
