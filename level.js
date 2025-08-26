@@ -380,3 +380,86 @@ function setupLevelCollisions(player) {
   // Player falls into lava (handled in character.js player update)
   // Platform interactions are handled by Kaboom's built-in physics
 }
+
+// Create animated background for level 1
+function createAnimatedBackground() {
+  try {
+    // Scale the background to cover the full screen height
+    const scaleY = GAME_HEIGHT / 512; // Scale to fit screen height
+    const scaleX = scaleY; // Keep aspect ratio square
+
+    // Calculate how many background tiles we need to cover the level width
+    const tileWidth = 2048 * scaleX; // Width of one scaled tile
+    const numTiles = Math.ceil(LEVEL_WIDTH / tileWidth) + 1; // Add extra tile for safety
+
+    console.log(
+      `Creating ${numTiles} animated background tiles, scale: ${scaleX}`
+    );
+
+    // Background frame names
+    const frameNames = [
+      "level1BackgroundFrame1",
+      "level1BackgroundFrame2",
+      "level1BackgroundFrame3",
+      "level1BackgroundFrame4",
+      "level1BackgroundFrame5",
+      "level1BackgroundFrame6",
+      "level1BackgroundFrame7",
+      "level1BackgroundFrame8",
+    ];
+
+    // Animation settings
+    const fps = 12; // 12 FPS as requested
+    const frameDuration = 1 / fps; // Duration of each frame in seconds
+    let currentFrame = 0;
+    let lastFrameTime = 0;
+
+    // Create background tiles for each position
+    const backgroundTiles = [];
+    for (let i = 0; i < numTiles; i++) {
+      const bgSprite = add([
+        sprite(frameNames[0]), // Start with first frame
+        pos(i * tileWidth, 0),
+        scale(scaleX, scaleY),
+        z(-20),
+        "animatedBackground",
+      ]);
+      backgroundTiles.push(bgSprite);
+    }
+
+    // Animation update function
+    function updateBackgroundAnimation() {
+      const currentTime = time();
+
+      // Check if it's time to advance to next frame
+      if (currentTime - lastFrameTime >= frameDuration) {
+        currentFrame = (currentFrame + 1) % frameNames.length;
+        lastFrameTime = currentTime;
+
+        // Update all background tiles to show the new frame
+        backgroundTiles.forEach((tile) => {
+          if (tile.exists()) {
+            tile.use(sprite(frameNames[currentFrame]));
+          }
+        });
+      }
+    }
+
+    // Add the animation update to the game loop
+    onUpdate(() => {
+      updateBackgroundAnimation();
+    });
+
+    console.log("✅ Successfully created animated level1 background");
+  } catch (error) {
+    console.error("❌ Failed to create animated background:", error);
+    // Fallback to colored background
+    add([
+      rect(LEVEL_WIDTH, GAME_HEIGHT),
+      pos(0, 0),
+      color(139, 69, 19), // Brown color for lava theme
+      z(-20),
+    ]);
+    console.log("Using colored background as fallback");
+  }
+}

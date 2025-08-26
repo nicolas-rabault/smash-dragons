@@ -543,8 +543,6 @@ async function loadGameAssets() {
       "./assets/level1_background/level1_background_frame_08.png"
     );
 
-    // Keep the old static background as fallback
-    loadSprite("level1Background", "./assets/level1_background.png");
     console.log("Loading animated level1 background frames...");
 
     // Load mobile control icons from the assets folder
@@ -584,10 +582,6 @@ function loadFallbackAssets() {
   );
   loadSprite(
     "platform",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
-  );
-  loadSprite(
-    "level1Background",
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
   );
 
@@ -1091,7 +1085,7 @@ function initializeScenes() {
     setupPlayerMovement(player);
     setupPowerCollisions(player);
     setupBossCollisions();
-    setupCamera(player);
+        setupCamera(player);
 
     // Initialize power selector UI
     updatePowerSelector(player);

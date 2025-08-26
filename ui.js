@@ -71,31 +71,38 @@ function updatePowerSelector(player) {
   // Remove existing power selector elements
   get("powerIcon").forEach((icon) => destroy(icon));
   get("powerSelector").forEach((selector) => destroy(selector));
-  
+
   const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
   if (availablePowers.length === 0) return;
-  
+
   const baseX = GAME_WIDTH - 60;
   const baseY = 20;
   const iconSize = 32;
   const spacing = 10;
-  
+
   // Create power icons
   availablePowers.forEach((power, index) => {
-    const posX = baseX - (index * (iconSize + spacing));
+    const posX = baseX - index * (iconSize + spacing);
     const isSelected = index === player.currentPowerIndex;
-    
+
     // Background for icon (selection indicator)
     add([
       rect(iconSize + 4, iconSize + 4),
       pos(posX - 2, baseY - 2),
       color(isSelected ? 255 : 100, isSelected ? 0 : 100, isSelected ? 0 : 100),
-      outline(2, rgb(isSelected ? 255 : 150, isSelected ? 255 : 150, isSelected ? 255 : 150)),
+      outline(
+        2,
+        rgb(
+          isSelected ? 255 : 150,
+          isSelected ? 255 : 150,
+          isSelected ? 255 : 150
+        )
+      ),
       fixed(),
       z(98),
       "powerSelector",
     ]);
-    
+
     // Power icon
     add([
       sprite(power.sprite),
@@ -106,7 +113,7 @@ function updatePowerSelector(player) {
       "powerIcon",
     ]);
   });
-  
+
   // Instructions text (only show if multiple powers)
   if (availablePowers.length > 1) {
     add([
@@ -115,12 +122,32 @@ function updatePowerSelector(player) {
         font: "sink",
       }),
       color(180, 180, 180),
-      pos(baseX - (availablePowers.length * (iconSize + spacing)) + iconSize, baseY + iconSize + 5),
+      pos(
+        baseX - availablePowers.length * (iconSize + spacing) + iconSize,
+        baseY + iconSize + 5
+      ),
       anchor("left"),
       fixed(),
       z(100),
       "powerSelector",
     ]);
+  }
+}
+
+function updateCurrentPowerDisplay(player) {
+  const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
+  const currentPower = availablePowers[player.currentPowerIndex];
+
+  if (get("powerText")[0]) {
+    get("powerText")[0].text = `Power: ${
+      currentPower ? currentPower.name : "None"
+    }`;
+  }
+
+  // Update power cycling instructions visibility
+  const powerInstructions = get("powerInstructions")[0];
+  if (powerInstructions) {
+    powerInstructions.hidden = availablePowers.length <= 1;
   }
 }
 

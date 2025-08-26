@@ -300,7 +300,7 @@ function updatePlayerPowers(player) {
   if (player.currentPowerIndex >= availablePowers.length) {
     player.currentPowerIndex = 0;
   }
-  
+
   // Update visual power selector
   updatePowerSelector(player);
 }

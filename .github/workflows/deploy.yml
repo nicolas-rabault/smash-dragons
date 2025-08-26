@@ -69,7 +69,7 @@ jobs:
 
           # Validate that required PNG assets exist
           echo "Validating PNG assets..."
-          required_assets=("hero.png" "dragon.png" "fireball.png" "waterball.png" "platform.png" "level1_background.png" "left.png")
+          required_assets=("hero.png" "dragon.png" "fireball.png" "waterball.png" "platform.png" "left.png")
           for asset in "${required_assets[@]}"; do
             if [ ! -f "assets/$asset" ]; then
               echo "Error: Required asset assets/$asset not found"
@@ -77,6 +77,22 @@ jobs:
             fi
           done
           echo "All PNG assets present ✓"
+
+          # Validate that animated background frames exist
+          echo "Validating animated background frames..."
+          if [ ! -d "assets/level1_background" ]; then
+            echo "Error: assets/level1_background directory not found"
+            exit 1
+          fi
+
+          required_background_frames=("level1_background_frame_01.png" "level1_background_frame_02.png" "level1_background_frame_03.png" "level1_background_frame_04.png" "level1_background_frame_05.png" "level1_background_frame_06.png" "level1_background_frame_07.png" "level1_background_frame_08.png")
+          for frame in "${required_background_frames[@]}"; do
+            if [ ! -f "assets/level1_background/$frame" ]; then
+              echo "Error: Required background frame assets/level1_background/$frame not found"
+              exit 1
+            fi
+          done
+          echo "All animated background frames present ✓"
 
           # Validate that required audio assets exist
           echo "Validating audio assets..."
@@ -100,7 +116,7 @@ jobs:
           cp index.html _site/
           cp main.js _site/
           cp README.md _site/
-          
+
           # Copy all modular JavaScript files
           cp gameData.js _site/
           cp level.js _site/
@@ -162,6 +178,7 @@ jobs:
           echo ""
           echo "The enhanced game includes:"
           echo "✓ High-quality sprite assets"
+          echo "✓ Animated background (12 FPS lava cavern)"
           echo "✓ Enhanced gameplay mechanics"
           echo "✓ Mobile touch controls"
           echo "✓ Scoring system and multiple lives"
