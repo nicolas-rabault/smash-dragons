@@ -381,7 +381,7 @@ function setupLevelCollisions(player) {
   // Platform interactions are handled by Kaboom's built-in physics
 }
 
-// Create animated background for level 1
+// Create animated background and parallax foreground for level 1
 function createAnimatedBackground() {
   try {
     // Scale the background to cover the full screen height
@@ -427,6 +427,19 @@ function createAnimatedBackground() {
       backgroundTiles.push(bgSprite);
     }
 
+    // Create parallax foreground tiles
+    const foregroundTiles = [];
+    for (let i = 0; i < numTiles; i++) {
+      const fgSprite = add([
+        sprite("level1Foreground"),
+        pos(i * tileWidth, 0),
+        scale(scaleX, scaleY),
+        z(-10), // Higher z-index than background but lower than game elements
+        "parallaxForeground",
+      ]);
+      foregroundTiles.push(fgSprite);
+    }
+
     // Animation update function
     function updateBackgroundAnimation() {
       const currentTime = time();
@@ -445,12 +458,35 @@ function createAnimatedBackground() {
       }
     }
 
+    // Parallax effect update function
+    function updateParallaxEffect() {
+      const cameraX = camPos().x;
+      const parallaxSpeed = 0.5; // Foreground moves slower than camera for parallax effect
+
+      foregroundTiles.forEach((tile, index) => {
+        if (tile.exists()) {
+          // Calculate parallax position based on camera
+          const parallaxX = index * tileWidth - cameraX * parallaxSpeed;
+
+          // Wrap around when tiles go off-screen
+          const wrappedX = parallaxX % (numTiles * tileWidth);
+          const finalX =
+            wrappedX < 0 ? wrappedX + numTiles * tileWidth : wrappedX;
+
+          tile.pos.x = finalX;
+        }
+      });
+    }
+
     // Add the animation update to the game loop
     onUpdate(() => {
       updateBackgroundAnimation();
+      updateParallaxEffect();
     });
 
-    console.log("✅ Successfully created animated level1 background");
+    console.log(
+      "✅ Successfully created animated level1 background with parallax foreground"
+    );
   } catch (error) {
     console.error("❌ Failed to create animated background:", error);
     // Fallback to colored background

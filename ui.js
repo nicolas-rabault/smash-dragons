@@ -89,7 +89,11 @@ function updatePowerSelector(player) {
     add([
       rect(iconSize + 4, iconSize + 4),
       pos(posX - 2, baseY - 2),
-      color(isSelected ? 200 : 100, isSelected ? 200 : 100, isSelected ? 200 : 100), // Light grey for selected
+      color(
+        isSelected ? 200 : 100,
+        isSelected ? 200 : 100,
+        isSelected ? 200 : 100
+      ), // Light grey for selected
       outline(
         2,
         rgb(
@@ -114,25 +118,6 @@ function updatePowerSelector(player) {
       "powerIcon",
     ]);
   });
-
-  // Instructions text (only show if multiple powers)
-  if (availablePowers.length > 1) {
-    add([
-      text("C/X: Switch", {
-        size: 12,
-        font: "sink",
-      }),
-      color(180, 180, 180),
-      pos(
-        baseX - availablePowers.length * (iconSize + spacing) + iconSize,
-        baseY + iconSize + 5
-      ),
-      anchor("left"),
-      fixed(),
-      z(100),
-      "powerSelector",
-    ]);
-  }
 }
 
 function updateCurrentPowerDisplay(player) {

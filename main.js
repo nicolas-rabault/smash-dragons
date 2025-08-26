@@ -543,7 +543,13 @@ async function loadGameAssets() {
       "./assets/level1_background/level1_background_frame_08.png"
     );
 
-    console.log("Loading animated level1 background frames...");
+    // Load foreground for parallax effect
+    loadSprite(
+      "level1Foreground",
+      "./assets/level1_background/level1_foreground.png"
+    );
+
+    console.log("Loading animated level1 background frames and foreground...");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
