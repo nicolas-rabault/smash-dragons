@@ -8,16 +8,6 @@ const powerCooldowns = new Map();
 
 // Unified power spawning system
 function spawnPower(caster, powerType, targetPos = null) {
-  console.log("spawnPower called with:", {
-    casterType: caster.is
-      ? caster.is("player")
-        ? "player"
-        : "other"
-      : "no_is_method",
-    powerType,
-    casterTags: caster.tags || "no_tags",
-  });
-
   const powerData = POWER_TYPES[powerType];
   if (!powerData) {
     console.error(`Unknown power type: ${powerType}`);
@@ -31,12 +21,6 @@ function spawnPower(caster, powerType, targetPos = null) {
     : `${caster.id || "unknown"}_${powerType}`;
   const lastUseTime = powerCooldowns.get(cooldownKey) || 0;
   if (time() - lastUseTime < powerData.cooldown) {
-    console.log(
-      "Power on cooldown:",
-      cooldownKey,
-      "remaining:",
-      powerData.cooldown - (time() - lastUseTime)
-    );
     return;
   }
   powerCooldowns.set(cooldownKey, time());
@@ -46,12 +30,10 @@ function spawnPower(caster, powerType, targetPos = null) {
 
   if (isPlayer) {
     // Player projectile
-    console.log("Creating player projectile");
     direction = vec2(caster.dir, -0.1).unit();
     spawnPos = caster.pos.add(vec2(caster.dir * 30, -10));
   } else {
     // Boss/enemy projectile
-    console.log("Creating boss projectile");
     const player = get("player")[0];
     if (!player || !player.exists()) return;
 
@@ -62,14 +44,6 @@ function spawnPower(caster, powerType, targetPos = null) {
   }
 
   // Create projectile
-  console.log("Creating projectile with:", {
-    sprite: powerData.sprite,
-    spawnPos,
-    direction,
-    speed: powerData.speed,
-    id: powerData.id,
-  });
-
   const projectile = add([
     sprite(powerData.sprite),
     pos(spawnPos),
@@ -88,7 +62,6 @@ function spawnPower(caster, powerType, targetPos = null) {
   // Create particle trail
   createPowerTrail(projectile, powerData);
 
-  console.log("Projectile created successfully:", projectile.exists());
   return projectile;
 }
 

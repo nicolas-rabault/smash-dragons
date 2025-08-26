@@ -236,43 +236,22 @@ function playerDies(player) {
 
 // Player shooting with current power
 function playerShoot(player) {
-  console.log(
-    "playerShoot called, player:",
-    player.exists(),
-    "canShoot:",
-    player.canShoot
-  );
-
   const availablePowers = PLAYER_PROGRESSION.getAvailablePowers();
-  console.log(
-    "Available powers:",
-    availablePowers.map((p) => p.name)
-  );
-
   if (availablePowers.length === 0) {
     console.warn("No powers available to player");
     return;
   }
 
   const currentPower = availablePowers[player.currentPowerIndex];
-  console.log(
-    "Current power index:",
-    player.currentPowerIndex,
-    "Current power:",
-    currentPower?.name
-  );
-
   if (!currentPower) {
     console.warn("Invalid power index:", player.currentPowerIndex);
     return;
   }
 
-  console.log("Calling spawnPower with:", currentPower.id);
   // Find the power type key that matches this id
   const powerTypeKey = Object.keys(POWER_TYPES).find(
     (key) => POWER_TYPES[key].id === currentPower.id
   );
-  console.log("Power type key found:", powerTypeKey);
   spawnPower(player, powerTypeKey);
 }
 

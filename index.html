@@ -179,15 +179,40 @@
     <div class="loading">Loading Smash Dragons...</div>
   </div>  
   <script src="https://unpkg.com/kaboom@3000/dist/kaboom.js"></script>
-  <!-- Load game data and modules first -->
-  <script src="gameData.js"></script>
-  <script src="level.js"></script>
-  <script src="powers.js"></script>
-  <script src="character.js"></script>
-  <script src="boss.js"></script>
-  <script src="ui.js"></script>
-  <!-- Load main.js last to ensure all dependencies are available -->
-  <script src="main.js"></script>
+  
+  <script>
+    // Module loading verification system
+    window.gameModulesLoaded = {
+      gameData: false,
+      level: false,
+      powers: false,
+      character: false,
+      boss: false,
+      ui: false,
+      main: false
+    };
+    
+    function checkAllModulesLoaded() {
+      const allLoaded = Object.values(window.gameModulesLoaded).every(loaded => loaded);
+      if (allLoaded) {
+        console.log("All game modules loaded successfully");
+      } else {
+        console.log("Modules loading status:", window.gameModulesLoaded);
+      }
+      return allLoaded;
+    }
+  </script>
+  
+  <!-- Load game data and modules with verification -->
+  <script src="gameData.js" onload="window.gameModulesLoaded.gameData = true; console.log('gameData.js loaded');" onerror="console.error('Failed to load gameData.js');"></script>
+  <script src="level.js" onload="window.gameModulesLoaded.level = true; console.log('level.js loaded');" onerror="console.error('Failed to load level.js');"></script>
+  <script src="powers.js" onload="window.gameModulesLoaded.powers = true; console.log('powers.js loaded');" onerror="console.error('Failed to load powers.js');"></script>
+  <script src="character.js" onload="window.gameModulesLoaded.character = true; console.log('character.js loaded');" onerror="console.error('Failed to load character.js');"></script>
+  <script src="boss.js" onload="window.gameModulesLoaded.boss = true; console.log('boss.js loaded');" onerror="console.error('Failed to load boss.js');"></script>
+  <script src="ui.js" onload="window.gameModulesLoaded.ui = true; console.log('ui.js loaded');" onerror="console.error('Failed to load ui.js');"></script>
+  
+  <!-- Load main.js last with verification -->
+  <script src="main.js" onload="window.gameModulesLoaded.main = true; console.log('main.js loaded'); checkAllModulesLoaded();" onerror="console.error('Failed to load main.js');"></script>
   
   <script>
     // Show info panel after a delay

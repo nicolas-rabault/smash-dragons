@@ -616,7 +616,10 @@ window.addEventListener("load", async () => {
   // Load assets
   await loadGameAssets();
 
-  // Initialize all scenes first
+  // Wait for next frame to ensure all scripts are fully loaded
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  // Initialize all scenes after ensuring all modules are loaded
   initializeScenes();
 
   // Global audio controls (available in all scenes)
@@ -654,8 +657,39 @@ window.addEventListener("load", async () => {
   }, 100);
 });
 
-// Initialize all game scenes
+// Initialize all game scenes - called after all modules are loaded
 function initializeScenes() {
+  console.log("Initializing scenes...");
+
+  // Verify all required functions are available
+  if (typeof createBackground === "undefined") {
+    console.error(
+      "createBackground is not defined - level.js not loaded properly"
+    );
+    return;
+  }
+  if (typeof createPlayer === "undefined") {
+    console.error(
+      "createPlayer is not defined - character.js not loaded properly"
+    );
+    return;
+  }
+  if (typeof createBoss === "undefined") {
+    console.error("createBoss is not defined - boss.js not loaded properly");
+    return;
+  }
+  if (typeof spawnPower === "undefined") {
+    console.error("spawnPower is not defined - powers.js not loaded properly");
+    return;
+  }
+  if (typeof createUI === "undefined") {
+    console.error("createUI is not defined - ui.js not loaded properly");
+    return;
+  }
+
+  console.log(
+    "All required functions available, proceeding with scene initialization..."
+  );
   // Main Menu Scene
   scene("menu", () => {
     // Use AudioManager for menu transition
