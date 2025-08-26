@@ -199,7 +199,24 @@ function playerDies(player) {
     if (gameState.lives > 0) {
       console.log("Player has lives left, respawning...");
       player.opacity = 0;
-      player.pos = vec2(180, 400);
+
+      // Choose respawn point based on game progress
+      let respawnPos;
+      if (gameState.playerInBossArea) {
+        // Respawn near boss area if player has reached it
+        const levelData = LEVEL_DATA[gameState.level];
+        const endPlatform = levelData.platforms.find((p) => p.type === "end");
+        respawnPos = endPlatform
+          ? vec2(endPlatform.x - 150, endPlatform.y - 50)
+          : vec2(1800, 400);
+        console.log("Respawning in boss area");
+      } else {
+        // Respawn at start of level
+        respawnPos = vec2(180, 400);
+        console.log("Respawning at level start");
+      }
+
+      player.pos = respawnPos;
       player.vel = vec2(0, 0);
 
       wait(2, () => {

@@ -150,7 +150,7 @@ const LEVEL_DATA = {
       { x: 1200, y: 380, type: "normal" },
       { x: 1450, y: 320, type: "normal" },
       { x: 1700, y: 280, type: "normal" },
-      { x: 1950, y: 450, type: "boss" },
+      { x: 1950, y: 350, type: "boss" },
       { x: 2200, y: 380, type: "end" },
     ],
     ambientMusic: "magmaAmbience",

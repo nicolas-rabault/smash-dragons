@@ -111,8 +111,11 @@ function setupBossAI(boss, bossData) {
       get("bossHealth")[0].width = 200 * healthPercent;
     }
 
-    // Boss attacking
-    if (time() - boss.lastShotTime > boss.attackCooldown) {
+    // Boss attacking (only if attack delay has passed)
+    if (
+      boss.canAttack !== false &&
+      time() - boss.lastShotTime > boss.attackCooldown
+    ) {
       const powerType = POWER_TYPES[boss.powerType];
       if (powerType) {
         spawnPower(boss, boss.powerType);
@@ -220,6 +223,9 @@ function killBoss(boss) {
     // Restart level 1 but keep the unlocked powers and current score
     gameState.level = 1;
     gameState.bossDefeated = false;
+    gameState.bossEncounterStarted = false;
+    gameState.bossSpawned = false;
+    gameState.playerInBossArea = false;
     // Keep score and lives, don't reset them
     go("game");
   });

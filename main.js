@@ -27,6 +27,9 @@ let gameState = {
   level: 1,
   bossDefeated: false,
   gameStarted: false,
+  bossEncounterStarted: false,
+  bossSpawned: false,
+  playerInBossArea: false,
 };
 
 // Audio Management System
@@ -505,8 +508,44 @@ async function loadGameAssets() {
     loadSprite("fireball", "./assets/fireball.png");
     loadSprite("waterball", "./assets/waterball.png");
     loadSprite("platform", "./assets/platform.png");
+
+    // Load animated background frames
+    loadSprite(
+      "level1BackgroundFrame1",
+      "./assets/level1_background/level1_background_frame_01.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame2",
+      "./assets/level1_background/level1_background_frame_02.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame3",
+      "./assets/level1_background/level1_background_frame_03.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame4",
+      "./assets/level1_background/level1_background_frame_04.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame5",
+      "./assets/level1_background/level1_background_frame_05.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame6",
+      "./assets/level1_background/level1_background_frame_06.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame7",
+      "./assets/level1_background/level1_background_frame_07.png"
+    );
+    loadSprite(
+      "level1BackgroundFrame8",
+      "./assets/level1_background/level1_background_frame_08.png"
+    );
+
+    // Keep the old static background as fallback
     loadSprite("level1Background", "./assets/level1_background.png");
-    console.log("Loading level1 background sprite...");
+    console.log("Loading animated level1 background frames...");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
@@ -549,6 +588,40 @@ function loadFallbackAssets() {
   );
   loadSprite(
     "level1Background",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+
+  // Fallback animated background frames (simple colored rectangles)
+  loadSprite(
+    "level1BackgroundFrame1",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame2",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame3",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame4",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame5",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame6",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame7",
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
+  );
+  loadSprite(
+    "level1BackgroundFrame8",
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA60e6kgAAAABJRU5ErkJggg=="
   );
 
@@ -965,6 +1038,9 @@ function initializeScenes() {
         level: 1,
         bossDefeated: false,
         gameStarted: true,
+        bossEncounterStarted: false,
+        bossSpawned: false,
+        playerInBossArea: false,
       };
       go("game");
     });
@@ -977,6 +1053,9 @@ function initializeScenes() {
         level: 1,
         bossDefeated: false,
         gameStarted: false,
+        bossEncounterStarted: false,
+        bossSpawned: false,
+        playerInBossArea: false,
       };
       go("menu");
     });
@@ -990,6 +1069,9 @@ function initializeScenes() {
         level: 1,
         bossDefeated: false,
         gameStarted: true,
+        bossEncounterStarted: false,
+        bossSpawned: false,
+        playerInBossArea: false,
       };
       go("game");
     });
@@ -1002,6 +1084,9 @@ function initializeScenes() {
         level: 1,
         bossDefeated: false,
         gameStarted: false,
+        bossEncounterStarted: false,
+        bossSpawned: false,
+        playerInBossArea: false,
       };
       go("menu");
     });
@@ -1027,8 +1112,11 @@ function initializeScenes() {
     // Create player
     const player = createPlayer();
 
-    // Create boss
-    const boss = createBoss();
+    // Boss will be created dynamically when player reaches encounter area
+    // Reset boss encounter states for new game
+    gameState.bossEncounterStarted = false;
+    gameState.bossSpawned = false;
+    gameState.playerInBossArea = false;
 
     // Create UI
     createUI();
