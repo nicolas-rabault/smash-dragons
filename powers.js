@@ -228,19 +228,8 @@ function onBossDefeated(boss, defeatingPowerType) {
   if (bossData.rewardPower) {
     PLAYER_PROGRESSION.unlockPower(bossData.rewardPower);
 
-    // Show power acquisition message
-    add([
-      text(`NEW POWER ACQUIRED: ${POWER_TYPES[bossData.rewardPower].name}!`, {
-        size: 24,
-        font: "sink",
-      }),
-      color(255, 255, 0),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 50),
-      anchor("center"),
-      fixed(),
-      z(201),
-      lifespan(3, { fade: 1 }),
-    ]);
+    // Power acquisition message is now handled by the victory screen
+    // No need for duplicate message here
   }
 
   // Update player powers and UI

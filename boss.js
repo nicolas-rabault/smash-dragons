@@ -293,114 +293,15 @@ function createVictoryScreen(bossData) {
       "victoryText",
     ]);
 
-    // Large power icon - NO BACKGROUND, perfectly centered
+    // Large power icon - COMPLETELY CLEAN, no decorations or background
     add([
       sprite(newPowerData.sprite),
       pos(GAME_WIDTH / 2, 360),
-      scale(5.0), // Even larger for maximum impact
+      scale(5.0), // Large and prominent
       anchor("center"),
       fixed(),
       z(201),
       "victoryPowerIcon",
-    ]);
-
-    // Subtle decorative elements around the icon (no background)
-    // Add elegant corner decorations instead of background
-    const iconRadius = 60;
-    const corners = [
-      { x: -iconRadius, y: -iconRadius }, // top-left
-      { x: iconRadius, y: -iconRadius },  // top-right
-      { x: -iconRadius, y: iconRadius },  // bottom-left
-      { x: iconRadius, y: iconRadius },   // bottom-right
-    ];
-
-    corners.forEach((corner) => {
-      add([
-        rect(8, 8),
-        pos(GAME_WIDTH / 2 + corner.x, 360 + corner.y),
-        anchor("center"),
-        color(255, 215, 0),
-        fixed(),
-        z(202),
-        "victoryDecoration",
-      ]);
-    });
-
-    // Add elegant lines extending from corners
-    // Horizontal lines
-    add([
-      rect(30, 2),
-      pos(GAME_WIDTH / 2 - iconRadius - 20, 360 - iconRadius),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(30, 2),
-      pos(GAME_WIDTH / 2 + iconRadius + 20, 360 - iconRadius),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(30, 2),
-      pos(GAME_WIDTH / 2 - iconRadius - 20, 360 + iconRadius),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(30, 2),
-      pos(GAME_WIDTH / 2 + iconRadius + 20, 360 + iconRadius),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-
-    // Vertical lines
-    add([
-      rect(2, 30),
-      pos(GAME_WIDTH / 2 - iconRadius, 360 - iconRadius - 20),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(2, 30),
-      pos(GAME_WIDTH / 2 + iconRadius, 360 - iconRadius - 20),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(2, 30),
-      pos(GAME_WIDTH / 2 - iconRadius, 360 + iconRadius + 20),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
-    ]);
-    add([
-      rect(2, 30),
-      pos(GAME_WIDTH / 2 + iconRadius, 360 + iconRadius + 20),
-      anchor("center"),
-      color(255, 215, 0, 0.8),
-      fixed(),
-      z(202),
-      "victoryDecoration",
     ]);
   }
 
