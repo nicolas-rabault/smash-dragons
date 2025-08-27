@@ -117,7 +117,7 @@ jobs:
           echo "Foreground file present ✓"
 
           # Validate level1-specific assets
-          required_level1_assets=("platform.png" "dragon.png" "magma_ambience_loop.wav")
+          required_level1_assets=("level1_platform.png" "level1_dragon.png" "level1_audio.wav")
           for asset in "${required_level1_assets[@]}"; do
             if [ ! -f "assets/level1/$asset" ]; then
               echo "Error: Required level1 asset assets/level1/$asset not found"

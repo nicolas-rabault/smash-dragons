@@ -60,7 +60,7 @@ class AudioManager {
       );
       await this.loadSound(
         "magmaAmbience",
-        "./assets/level1/magma_ambience_loop.wav",
+        "./assets/level1/level1_audio.wav",
         "ambience"
       );
       await this.loadSound(
@@ -504,10 +504,10 @@ async function loadGameAssets() {
   try {
     // Load PNG files directly instead of data URIs
     loadSprite("hero", "./assets/hero.png");
-    loadSprite("dragon", "./assets/level1/dragon.png");
+    loadSprite("dragon", "./assets/level1/level1_dragon.png");
     loadSprite("fireball", "./assets/powers/fireball.png");
     loadSprite("waterball", "./assets/powers/waterball.png");
-    loadSprite("platform", "./assets/level1/platform.png");
+    loadSprite("platform", "./assets/level1/level1_platform.png");
 
     // Load animated background frames
     loadSprite(

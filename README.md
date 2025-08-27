@@ -110,9 +110,9 @@ smash-dragons/
 │   │   ├── fireball.png
 │   │   └── waterball.png
 │   ├── level1/                 # Level 1 specific assets
-│   │   ├── dragon.png
-│   │   ├── platform.png
-│   │   ├── magma_ambience_loop.wav
+│   │   ├── level1_dragon.png
+│   │   ├── level1_platform.png
+│   │   ├── level1_audio.wav
 │   │   ├── level1_background_frame_01-08.png
 │   │   └── level1_foreground.png
 │   └── level2/                 # Level 2 background frames
