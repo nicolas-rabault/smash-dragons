@@ -193,105 +193,8 @@ function killBoss(boss) {
     console.error("Error removing boss UI:", error);
   }
 
-  // Victory message with boss-specific text
-  add([
-    text(`${bossData.name.toUpperCase()} DEFEATED!`, {
-      size: 36,
-      font: "sink",
-    }),
-    color(255, 255, 0),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 80),
-    anchor("center"),
-    fixed(),
-    z(200),
-  ]);
-
-  // Display the newly acquired power
-  const newPowerData = POWER_TYPES[bossData.rewardPower];
-  if (newPowerData) {
-    // Power acquisition announcement
-    add([
-      text(`NEW POWER ACQUIRED!`, {
-        size: 32,
-        font: "sink",
-      }),
-      color(255, 215, 0), // Gold color instead of green
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50),
-      anchor("center"),
-      fixed(),
-      z(200),
-      lifespan(4, { fade: 1 }),
-    ]);
-
-    // Power name
-    add([
-      text(newPowerData.name, {
-        size: 36,
-        font: "sink",
-      }),
-      color(255, 255, 255),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
-      anchor("center"),
-      fixed(),
-      z(200),
-      lifespan(4, { fade: 1 }),
-    ]);
-
-    // Large power icon - much bigger and more prominent
-    add([
-      sprite(newPowerData.sprite),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 70),
-      scale(4.0), // Much larger display
-      anchor("center"),
-      fixed(),
-      z(201),
-      lifespan(4, { fade: 1 }),
-    ]);
-
-    // Elegant glow effect - subtle golden glow instead of green background
-    add([
-      rect(140, 140),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 70),
-      anchor("center"),
-      color(255, 215, 0, 0.1), // Very subtle golden background
-      outline(4, rgb(255, 215, 0, 0.6)), // Golden outline
-      fixed(),
-      z(200),
-      lifespan(4, { fade: 1 }),
-    ]);
-
-    // Add sparkle effects around the power icon
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const radius = 80;
-      const x = GAME_WIDTH / 2 + Math.cos(angle) * radius;
-      const y = GAME_HEIGHT / 2 + 70 + Math.sin(angle) * radius;
-      
-      add([
-        rect(4, 4),
-        pos(x, y),
-        anchor("center"),
-        color(255, 215, 0),
-        fixed(),
-        z(202),
-        lifespan(4, { fade: 2 }),
-      ]);
-    }
-  }
-
-  // Instructions - positioned below the larger power display
-  add([
-    text("Press SPACE to restart Level 1 with new power!", {
-      size: 18,
-      font: "sink",
-    }),
-    color(255, 255, 255),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 160),
-    anchor("center"),
-    fixed(),
-    z(200),
-    lifespan(4, { fade: 1 }),
-  ]);
+  // Create elegant victory screen with proper spacing and no overlaps
+  createVictoryScreen(bossData);
 
   onKeyPress("space", () => {
     // Restart level 1 but keep the unlocked powers and current score
@@ -303,6 +206,232 @@ function killBoss(boss) {
     // Keep score and lives, don't reset them
     go("game");
   });
+}
+
+// Create beautiful victory screen with perfect spacing and no overlaps
+function createVictoryScreen(bossData) {
+  // Semi-transparent dark overlay for better readability
+  add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(0, 0, 0, 0.7),
+    fixed(),
+    z(190),
+    "victoryOverlay",
+  ]);
+
+  // Victory title - well positioned at top
+  add([
+    text("VICTORY!", {
+      size: 48,
+      font: "sink",
+    }),
+    color(255, 215, 0),
+    pos(GAME_WIDTH / 2, 80),
+    anchor("center"),
+    fixed(),
+    z(200),
+    "victoryText",
+  ]);
+
+  // Boss defeated message
+  add([
+    text(`${bossData.name.toUpperCase()} DEFEATED!`, {
+      size: 28,
+      font: "sink",
+    }),
+    color(255, 100, 100),
+    pos(GAME_WIDTH / 2, 130),
+    anchor("center"),
+    fixed(),
+    z(200),
+    "victoryText",
+  ]);
+
+  // Score gained message
+  add([
+    text(`+1000 POINTS`, {
+      size: 20,
+      font: "sink",
+    }),
+    color(100, 255, 100),
+    pos(GAME_WIDTH / 2, 170),
+    anchor("center"),
+    fixed(),
+    z(200),
+    "victoryText",
+  ]);
+
+  // Display the newly acquired power
+  const newPowerData = POWER_TYPES[bossData.rewardPower];
+  if (newPowerData) {
+    // Power acquisition section title
+    add([
+      text("NEW POWER ACQUIRED!", {
+        size: 32,
+        font: "sink",
+      }),
+      color(255, 215, 0),
+      pos(GAME_WIDTH / 2, 230),
+      anchor("center"),
+      fixed(),
+      z(200),
+      "victoryText",
+    ]);
+
+    // Power name with elegant styling
+    add([
+      text(newPowerData.name.toUpperCase(), {
+        size: 40,
+        font: "sink",
+      }),
+      color(255, 255, 255),
+      pos(GAME_WIDTH / 2, 280),
+      anchor("center"),
+      fixed(),
+      z(200),
+      "victoryText",
+    ]);
+
+    // Large power icon - NO BACKGROUND, perfectly centered
+    add([
+      sprite(newPowerData.sprite),
+      pos(GAME_WIDTH / 2, 360),
+      scale(5.0), // Even larger for maximum impact
+      anchor("center"),
+      fixed(),
+      z(201),
+      "victoryPowerIcon",
+    ]);
+
+    // Subtle decorative elements around the icon (no background)
+    // Add elegant corner decorations instead of background
+    const iconRadius = 60;
+    const corners = [
+      { x: -iconRadius, y: -iconRadius }, // top-left
+      { x: iconRadius, y: -iconRadius },  // top-right
+      { x: -iconRadius, y: iconRadius },  // bottom-left
+      { x: iconRadius, y: iconRadius },   // bottom-right
+    ];
+
+    corners.forEach((corner) => {
+      add([
+        rect(8, 8),
+        pos(GAME_WIDTH / 2 + corner.x, 360 + corner.y),
+        anchor("center"),
+        color(255, 215, 0),
+        fixed(),
+        z(202),
+        "victoryDecoration",
+      ]);
+    });
+
+    // Add elegant lines extending from corners
+    // Horizontal lines
+    add([
+      rect(30, 2),
+      pos(GAME_WIDTH / 2 - iconRadius - 20, 360 - iconRadius),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(30, 2),
+      pos(GAME_WIDTH / 2 + iconRadius + 20, 360 - iconRadius),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(30, 2),
+      pos(GAME_WIDTH / 2 - iconRadius - 20, 360 + iconRadius),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(30, 2),
+      pos(GAME_WIDTH / 2 + iconRadius + 20, 360 + iconRadius),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+
+    // Vertical lines
+    add([
+      rect(2, 30),
+      pos(GAME_WIDTH / 2 - iconRadius, 360 - iconRadius - 20),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(2, 30),
+      pos(GAME_WIDTH / 2 + iconRadius, 360 - iconRadius - 20),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(2, 30),
+      pos(GAME_WIDTH / 2 - iconRadius, 360 + iconRadius + 20),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+    add([
+      rect(2, 30),
+      pos(GAME_WIDTH / 2 + iconRadius, 360 + iconRadius + 20),
+      anchor("center"),
+      color(255, 215, 0, 0.8),
+      fixed(),
+      z(202),
+      "victoryDecoration",
+    ]);
+  }
+
+  // Instructions - well-spaced at bottom
+  add([
+    text("Press SPACE to continue your adventure", {
+      size: 20,
+      font: "sink",
+    }),
+    color(200, 200, 255),
+    pos(GAME_WIDTH / 2, 480),
+    anchor("center"),
+    fixed(),
+    z(200),
+    "victoryText",
+  ]);
+
+  add([
+    text("with your new power!", {
+      size: 20,
+      font: "sink",
+    }),
+    color(200, 200, 255),
+    pos(GAME_WIDTH / 2, 510),
+    anchor("center"),
+    fixed(),
+    z(200),
+    "victoryText",
+  ]);
+
+  console.log("✨ Beautiful victory screen created with perfect spacing!");
 }
 
 // Boss collision setup (now handled in powers.js unified system)
