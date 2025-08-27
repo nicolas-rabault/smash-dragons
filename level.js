@@ -346,7 +346,7 @@ function spawnActualBoss(bossData, position) {
 
   // Create actual boss with AI and health bar
   const boss = createBossEntity(modifiedBossData);
-  createBossHealthBar(bossData);
+  // Health bar is already created in createBossEntity, no need to create again
 
   // Add attack delay - boss waits 2 seconds before attacking
   boss.attackStartTime = time() + 2.0; // Boss won't attack for first 2 seconds

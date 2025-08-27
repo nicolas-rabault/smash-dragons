@@ -212,62 +212,85 @@ function killBoss(boss) {
     // Power acquisition announcement
     add([
       text(`NEW POWER ACQUIRED!`, {
-        size: 24,
+        size: 32,
         font: "sink",
       }),
-      color(100, 255, 100),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 30),
+      color(255, 215, 0), // Gold color instead of green
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50),
       anchor("center"),
       fixed(),
       z(200),
+      lifespan(4, { fade: 1 }),
     ]);
 
     // Power name
     add([
       text(newPowerData.name, {
-        size: 28,
+        size: 36,
         font: "sink",
       }),
       color(255, 255, 255),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
       anchor("center"),
       fixed(),
       z(200),
+      lifespan(4, { fade: 1 }),
     ]);
 
-    // Large power icon
+    // Large power icon - much bigger and more prominent
     add([
       sprite(newPowerData.sprite),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60),
-      scale(2.0), // Large, prominent display
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 70),
+      scale(4.0), // Much larger display
       anchor("center"),
       fixed(),
       z(201),
+      lifespan(4, { fade: 1 }),
     ]);
 
-    // Glowing effect around the power icon
+    // Elegant glow effect - subtle golden glow instead of green background
     add([
-      rect(80, 80),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60),
+      rect(140, 140),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 70),
       anchor("center"),
-      color(100, 255, 100, 0.3),
-      outline(3, rgb(100, 255, 100, 0.8)),
+      color(255, 215, 0, 0.1), // Very subtle golden background
+      outline(4, rgb(255, 215, 0, 0.6)), // Golden outline
       fixed(),
       z(200),
+      lifespan(4, { fade: 1 }),
     ]);
+
+    // Add sparkle effects around the power icon
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const radius = 80;
+      const x = GAME_WIDTH / 2 + Math.cos(angle) * radius;
+      const y = GAME_HEIGHT / 2 + 70 + Math.sin(angle) * radius;
+      
+      add([
+        rect(4, 4),
+        pos(x, y),
+        anchor("center"),
+        color(255, 215, 0),
+        fixed(),
+        z(202),
+        lifespan(4, { fade: 2 }),
+      ]);
+    }
   }
 
-  // Instructions
+  // Instructions - positioned below the larger power display
   add([
     text("Press SPACE to restart Level 1 with new power!", {
       size: 18,
       font: "sink",
     }),
     color(255, 255, 255),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 160),
     anchor("center"),
     fixed(),
     z(200),
+    lifespan(4, { fade: 1 }),
   ]);
 
   onKeyPress("space", () => {
