@@ -105,15 +105,17 @@ smash-dragons/
 ├── assets_data_uris.json   # Embedded sprite assets
 ├── assets/                 # Original asset files
 │   ├── hero.png
-│   ├── dragon.png
-│   ├── fireball.png
-│   ├── waterball.png
+│   ├── left.png
+│   ├── powers/                 # Power-related sprites
+│   │   ├── fireball.png
+│   │   └── waterball.png
 │   ├── level1/                 # Level 1 specific assets
+│   │   ├── dragon.png
 │   │   ├── platform.png
 │   │   ├── magma_ambience_loop.wav
 │   │   ├── level1_background_frame_01-08.png
 │   │   └── level1_foreground.png
-│   └── level2_background/      # Level 2 background frames
+│   └── level2/                 # Level 2 background frames
 └── .github/workflows/      # Auto-deployment to GitHub Pages
 ```
 

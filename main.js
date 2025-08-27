@@ -504,9 +504,9 @@ async function loadGameAssets() {
   try {
     // Load PNG files directly instead of data URIs
     loadSprite("hero", "./assets/hero.png");
-    loadSprite("dragon", "./assets/dragon.png");
-    loadSprite("fireball", "./assets/fireball.png");
-    loadSprite("waterball", "./assets/waterball.png");
+    loadSprite("dragon", "./assets/level1/dragon.png");
+    loadSprite("fireball", "./assets/powers/fireball.png");
+    loadSprite("waterball", "./assets/powers/waterball.png");
     loadSprite("platform", "./assets/level1/platform.png");
 
     // Load animated background frames
@@ -554,7 +554,7 @@ async function loadGameAssets() {
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
     loadSprite("rightArrow", "./assets/left.png"); // We'll flip this
-    loadSprite("fireIcon", "./assets/fireball.png");
+    loadSprite("fireIcon", "./assets/powers/fireball.png");
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
 
     // Initialize AudioManager

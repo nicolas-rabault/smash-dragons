@@ -69,14 +69,29 @@ jobs:
 
           # Validate that required PNG assets exist
           echo "Validating PNG assets..."
-          required_assets=("hero.png" "dragon.png" "fireball.png" "waterball.png" "platform.png" "left.png")
-          for asset in "${required_assets[@]}"; do
+          required_general_assets=("hero.png" "left.png")
+          for asset in "${required_general_assets[@]}"; do
             if [ ! -f "assets/$asset" ]; then
-              echo "Error: Required asset assets/$asset not found"
+              echo "Error: Required general asset assets/$asset not found"
               exit 1
             fi
           done
-          echo "All PNG assets present ✓"
+          echo "General PNG assets present ✓"
+
+          # Validate powers folder assets
+          echo "Validating powers assets..."
+          if [ ! -d "assets/powers" ]; then
+            echo "Error: assets/powers directory not found"
+            exit 1
+          fi
+          required_power_assets=("fireball.png" "waterball.png")
+          for asset in "${required_power_assets[@]}"; do
+            if [ ! -f "assets/powers/$asset" ]; then
+              echo "Error: Required power asset assets/powers/$asset not found"
+              exit 1
+            fi
+          done
+          echo "Power assets present ✓"
 
           # Validate that animated background frames exist
           echo "Validating animated background frames..."
@@ -102,14 +117,13 @@ jobs:
           echo "Foreground file present ✓"
 
           # Validate level1-specific assets
-          if [ ! -f "assets/level1/platform.png" ]; then
-            echo "Error: Required platform file assets/level1/platform.png not found"
-            exit 1
-          fi
-          if [ ! -f "assets/level1/magma_ambience_loop.wav" ]; then
-            echo "Error: Required level1 ambience file assets/level1/magma_ambience_loop.wav not found"
-            exit 1
-          fi
+          required_level1_assets=("platform.png" "dragon.png" "magma_ambience_loop.wav")
+          for asset in "${required_level1_assets[@]}"; do
+            if [ ! -f "assets/level1/$asset" ]; then
+              echo "Error: Required level1 asset assets/level1/$asset not found"
+              exit 1
+            fi
+          done
           echo "Level1-specific assets present ✓"
 
           # Validate that required audio assets exist
