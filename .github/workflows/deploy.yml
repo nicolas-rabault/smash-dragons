@@ -80,37 +80,48 @@ jobs:
 
           # Validate that animated background frames exist
           echo "Validating animated background frames..."
-          if [ ! -d "assets/level1_background" ]; then
-            echo "Error: assets/level1_background directory not found"
+          if [ ! -d "assets/level1" ]; then
+            echo "Error: assets/level1 directory not found"
             exit 1
           fi
 
           required_background_frames=("level1_background_frame_01.png" "level1_background_frame_02.png" "level1_background_frame_03.png" "level1_background_frame_04.png" "level1_background_frame_05.png" "level1_background_frame_06.png" "level1_background_frame_07.png" "level1_background_frame_08.png")
           for frame in "${required_background_frames[@]}"; do
-            if [ ! -f "assets/level1_background/$frame" ]; then
-              echo "Error: Required background frame assets/level1_background/$frame not found"
+            if [ ! -f "assets/level1/$frame" ]; then
+              echo "Error: Required background frame assets/level1/$frame not found"
               exit 1
             fi
           done
           echo "All animated background frames present ✓"
 
           # Validate foreground file
-          if [ ! -f "assets/level1_background/level1_foreground.png" ]; then
-            echo "Error: Required foreground file assets/level1_background/level1_foreground.png not found"
+          if [ ! -f "assets/level1/level1_foreground.png" ]; then
+            echo "Error: Required foreground file assets/level1/level1_foreground.png not found"
             exit 1
           fi
           echo "Foreground file present ✓"
 
+          # Validate level1-specific assets
+          if [ ! -f "assets/level1/platform.png" ]; then
+            echo "Error: Required platform file assets/level1/platform.png not found"
+            exit 1
+          fi
+          if [ ! -f "assets/level1/magma_ambience_loop.wav" ]; then
+            echo "Error: Required level1 ambience file assets/level1/magma_ambience_loop.wav not found"
+            exit 1
+          fi
+          echo "Level1-specific assets present ✓"
+
           # Validate that required audio assets exist
           echo "Validating audio assets..."
-          required_audio=("menu_theme_loop.wav" "magma_ambience_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav" "waterball_explosion.wav")
+          required_audio=("menu_theme_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav" "waterball_explosion.wav")
           for audio in "${required_audio[@]}"; do
             if [ ! -f "assets/audio/$audio" ]; then
               echo "Error: Required audio asset assets/audio/$audio not found"
               exit 1
             fi
           done
-          echo "All audio assets present ✓"
+          echo "General audio assets present ✓"
 
       - name: Create static site
         run: |

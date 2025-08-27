@@ -60,7 +60,7 @@ class AudioManager {
       );
       await this.loadSound(
         "magmaAmbience",
-        "./assets/audio/magma_ambience_loop.wav",
+        "./assets/level1/magma_ambience_loop.wav",
         "ambience"
       );
       await this.loadSound(
@@ -507,46 +507,46 @@ async function loadGameAssets() {
     loadSprite("dragon", "./assets/dragon.png");
     loadSprite("fireball", "./assets/fireball.png");
     loadSprite("waterball", "./assets/waterball.png");
-    loadSprite("platform", "./assets/platform.png");
+    loadSprite("platform", "./assets/level1/platform.png");
 
     // Load animated background frames
     loadSprite(
       "level1BackgroundFrame1",
-      "./assets/level1_background/level1_background_frame_01.png"
+      "./assets/level1/level1_background_frame_01.png"
     );
     loadSprite(
       "level1BackgroundFrame2",
-      "./assets/level1_background/level1_background_frame_02.png"
+      "./assets/level1/level1_background_frame_02.png"
     );
     loadSprite(
       "level1BackgroundFrame3",
-      "./assets/level1_background/level1_background_frame_03.png"
+      "./assets/level1/level1_background_frame_03.png"
     );
     loadSprite(
       "level1BackgroundFrame4",
-      "./assets/level1_background/level1_background_frame_04.png"
+      "./assets/level1/level1_background_frame_04.png"
     );
     loadSprite(
       "level1BackgroundFrame5",
-      "./assets/level1_background/level1_background_frame_05.png"
+      "./assets/level1/level1_background_frame_05.png"
     );
     loadSprite(
       "level1BackgroundFrame6",
-      "./assets/level1_background/level1_background_frame_06.png"
+      "./assets/level1/level1_background_frame_06.png"
     );
     loadSprite(
       "level1BackgroundFrame7",
-      "./assets/level1_background/level1_background_frame_07.png"
+      "./assets/level1/level1_background_frame_07.png"
     );
     loadSprite(
       "level1BackgroundFrame8",
-      "./assets/level1_background/level1_background_frame_08.png"
+      "./assets/level1/level1_background_frame_08.png"
     );
 
     // Load foreground for parallax effect
     loadSprite(
       "level1Foreground",
-      "./assets/level1_background/level1_foreground.png"
+      "./assets/level1/level1_foreground.png"
     );
 
     console.log("Loading animated level1 background frames and foreground...");

@@ -108,8 +108,12 @@ smash-dragons/
 │   ├── dragon.png
 │   ├── fireball.png
 │   ├── waterball.png
-│   ├── platform.png
-│   └── background.png
+│   ├── level1/                 # Level 1 specific assets
+│   │   ├── platform.png
+│   │   ├── magma_ambience_loop.wav
+│   │   ├── level1_background_frame_01-08.png
+│   │   └── level1_foreground.png
+│   └── level2_background/      # Level 2 background frames
 └── .github/workflows/      # Auto-deployment to GitHub Pages
 ```
 
