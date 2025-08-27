@@ -227,41 +227,13 @@ function setupCamera(player) {
 
 // Trigger boss encounter sequence
 function triggerBossEncounter(player) {
-  console.log("🎬 Starting boss encounter sequence");
+  console.log("🎬 Starting boss encounter sequence immediately");
 
-  // Wait for player to stop moving
-  waitForPlayerToStop(player, () => {
-    console.log("🎬 Player stopped - starting boss entrance animation");
-    startBossEntranceAnimation();
-  });
+  // Start boss entrance animation immediately when player reaches the area
+  startBossEntranceAnimation();
 }
 
-// Wait for player to stop moving before starting boss encounter
-function waitForPlayerToStop(player, callback) {
-  let lastPlayerPos = player.pos.clone();
-  let stillTime = 0;
-  const REQUIRED_STILL_TIME = 1.0; // Player must be still for 1 second
-
-  const checkStillness = setInterval(() => {
-    const currentPos = player.pos;
-    const distance =
-      Math.abs(currentPos.x - lastPlayerPos.x) +
-      Math.abs(currentPos.y - lastPlayerPos.y);
-
-    if (distance < 5) {
-      // Player is mostly still (accounting for small physics jitter)
-      stillTime += 0.1;
-      if (stillTime >= REQUIRED_STILL_TIME) {
-        clearInterval(checkStillness);
-        callback();
-      }
-    } else {
-      stillTime = 0; // Reset timer if player moves
-    }
-
-    lastPlayerPos = currentPos.clone();
-  }, 100); // Check every 100ms
-}
+// Note: waitForPlayerToStop function removed - boss encounter now triggers immediately
 
 // Start the dramatic boss entrance animation
 function startBossEntranceAnimation() {
