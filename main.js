@@ -637,7 +637,7 @@ async function loadGameAssets() {
     loadSprite("rightArrow", "./assets/left.png"); // We'll flip this
     loadSprite("fireIcon", "./assets/powers/windball.png"); // Default power icon
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
-    
+
     // Load menu background
     loadSprite("menuBackground", "./assets/menu_background.png");
 
@@ -803,12 +803,7 @@ function initializeScenes() {
     audioManager.transitionToMenu();
 
     // Menu background image
-    add([
-      sprite("menuBackground"),
-      pos(0, 0),
-      scale(1),
-      z(-10),
-    ]);
+    add([sprite("menuBackground"), pos(0, 0), scale(1), z(-10)]);
 
     // Create clickable start button
     const startButton = add([
