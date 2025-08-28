@@ -826,19 +826,19 @@ function initializeScenes() {
 
     const controlsButtonText = add([
       text("CONTROLS", {
-          size: 16,
-          font: "sink",
-        }),
+        size: 16,
+        font: "sink",
+      }),
       pos(GAME_WIDTH / 2 - 100, 300),
       anchor("center"),
-        color(255, 255, 255),
+      color(255, 255, 255),
       z(10),
     ]);
 
     const creditsButton = add([
       rect(180, 50),
       pos(GAME_WIDTH / 2 + 100, 300),
-        anchor("center"),
+      anchor("center"),
       color(150, 70, 70),
       area(),
       "creditsButton",
@@ -1426,12 +1426,12 @@ function showLevelSelector() {
     );
 
     // Level button background with better visibility
-    const buttonColor = isCurrentLevel ? [100, 255, 100] : [100, 100, 200];
+    const buttonColor = isCurrentLevel ? [40, 120, 40] : [40, 40, 120]; // Darker colors
     add([
       rect(400, 60),
       pos(GAME_WIDTH / 2 - 200, y - 30),
-      color(buttonColor[0], buttonColor[1], buttonColor[2], 0.8), // More opaque for better contrast
-      outline(3, rgb(buttonColor[0], buttonColor[1], buttonColor[2])),
+      color(buttonColor[0], buttonColor[1], buttonColor[2], 0.9), // Very opaque dark background
+      outline(3, rgb(buttonColor[0] + 60, buttonColor[1] + 60, buttonColor[2] + 60)), // Lighter outline
       fixed(),
       z(151),
       "levelSelector",
@@ -1445,7 +1445,7 @@ function showLevelSelector() {
       }),
       pos(GAME_WIDTH / 2, y - 10),
       anchor("center"),
-      color(0, 0, 0), // Black text for better contrast
+      color(255, 255, 255), // White text on dark background
       fixed(),
       z(152),
       "levelSelector",
@@ -1463,7 +1463,7 @@ function showLevelSelector() {
       ),
       pos(GAME_WIDTH / 2, y + 10),
       anchor("center"),
-      color(20, 20, 20), // Dark gray text for better readability
+      color(220, 220, 220), // Light gray text on dark background
       fixed(),
       z(152),
       "levelSelector",
@@ -1570,12 +1570,12 @@ function switchToLevel(targetLevel) {
 function showControlsModal() {
   console.log("🎮 showControlsModal() started");
   console.log("🎮 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
-  
+
   // Remove existing modal if any
   hideModal();
 
   console.log("🎮 Creating modal overlay...");
-  
+
   // Create modal overlay with click area
   const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
@@ -1586,7 +1586,7 @@ function showControlsModal() {
     z(200),
     "modal",
   ]);
-  
+
   console.log("🎮 Overlay created:", overlay);
 
   // Modal background
@@ -1601,7 +1601,7 @@ function showControlsModal() {
     z(201),
     "modal",
   ]);
-  
+
   console.log("🎮 Modal background created:", modalBg);
 
   // Title
@@ -1618,7 +1618,7 @@ function showControlsModal() {
     z(202),
     "modal",
   ]);
-  
+
   console.log("🎮 Modal title created:", title);
 
   // Controls instructions
@@ -1685,7 +1685,7 @@ function showControlsModal() {
 function showCreditsModal() {
   console.log("🏆 showCreditsModal() started");
   console.log("🏆 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
-  
+
   // Remove existing modal if any
   hideModal();
 
