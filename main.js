@@ -826,41 +826,68 @@ function initializeScenes() {
       anchor("center"),
     ]);
 
-    // Instructions
-    const instructions = [
-      "ARROW KEYS or Q/D - Move",
-      "Z or UP - Jump",
-      "SPACE or E - Shoot Fireballs",
-      "Defeat the Dragon Boss!",
-    ];
+    // Controls and Credits buttons
+    const controlsButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 - 100, 300),
+      anchor("center"),
+      color(70, 70, 150),
+      area(),
+      "controlsButton",
+      {
+        isHovered: false,
+      },
+    ]);
 
-    instructions.forEach((line, i) => {
-      add([
-        text(line, {
-          size: 16,
-          font: "sink",
-        }),
-        color(255, 255, 255),
-        pos(GAME_WIDTH / 2, 280 + i * 25),
-        anchor("center"),
-      ]);
-    });
+    const controlsButtonText = add([
+      text("CONTROLS", {
+        size: 16,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2 - 100, 300),
+      anchor("center"),
+      color(255, 255, 255),
+      z(10),
+    ]);
 
-    // Audio controls info
+    const creditsButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 + 100, 300),
+      anchor("center"),
+      color(150, 70, 70),
+      area(),
+      "creditsButton",
+      {
+        isHovered: false,
+      },
+    ]);
+
+    const creditsButtonText = add([
+      text("CREDITS", {
+        size: 16,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2 + 100, 300),
+      anchor("center"),
+      color(255, 255, 255),
+      z(10),
+    ]);
+
+    // Audio controls info (kept small)
     add([
       text("Press M to mute/unmute audio", {
         size: 14,
         font: "sink",
       }),
       color(180, 180, 180),
-      pos(GAME_WIDTH / 2, 380),
+      pos(GAME_WIDTH / 2, 360),
       anchor("center"),
     ]);
 
     // Create clickable start button
     const startButton = add([
       rect(200, 60),
-      pos(GAME_WIDTH / 2, 420),
+      pos(GAME_WIDTH / 2, 450),
       anchor("center"),
       color(50, 150, 50),
       area(),
@@ -876,11 +903,51 @@ function initializeScenes() {
         size: 20,
         font: "sink",
       }),
-      pos(GAME_WIDTH / 2, 420),
+      pos(GAME_WIDTH / 2, 450),
       anchor("center"),
       color(255, 255, 255),
       z(10),
     ]);
+
+    // Controls button hover effect
+    controlsButton.onUpdate(() => {
+      const mouse = mousePos();
+      const isHovering =
+        mouse.x >= controlsButton.pos.x - 90 &&
+        mouse.x <= controlsButton.pos.x + 90 &&
+        mouse.y >= controlsButton.pos.y - 25 &&
+        mouse.y <= controlsButton.pos.y + 25;
+
+      if (isHovering && !controlsButton.isHovered) {
+        controlsButton.isHovered = true;
+        controlsButton.color = rgb(100, 100, 200);
+        document.body.style.cursor = "pointer";
+      } else if (!isHovering && controlsButton.isHovered) {
+        controlsButton.isHovered = false;
+        controlsButton.color = rgb(70, 70, 150);
+        document.body.style.cursor = "default";
+      }
+    });
+
+    // Credits button hover effect
+    creditsButton.onUpdate(() => {
+      const mouse = mousePos();
+      const isHovering =
+        mouse.x >= creditsButton.pos.x - 90 &&
+        mouse.x <= creditsButton.pos.x + 90 &&
+        mouse.y >= creditsButton.pos.y - 25 &&
+        mouse.y <= creditsButton.pos.y + 25;
+
+      if (isHovering && !creditsButton.isHovered) {
+        creditsButton.isHovered = true;
+        creditsButton.color = rgb(200, 100, 100);
+        document.body.style.cursor = "pointer";
+      } else if (!isHovering && creditsButton.isHovered) {
+        creditsButton.isHovered = false;
+        creditsButton.color = rgb(150, 70, 70);
+        document.body.style.cursor = "default";
+      }
+    });
 
     // Enhanced button interaction for mobile
     startButton.onUpdate(() => {
@@ -915,6 +982,18 @@ function initializeScenes() {
 
       gameState.gameStarted = true;
       go("game");
+    });
+
+    // Controls button click handler
+    controlsButton.onClick(() => {
+      console.log("Controls button clicked");
+      showControlsModal();
+    });
+
+    // Credits button click handler
+    creditsButton.onClick(() => {
+      console.log("Credits button clicked");
+      showCreditsModal();
     });
 
     // Add touch events for mobile
@@ -1454,6 +1533,216 @@ function switchToLevel(targetLevel) {
 
   // Go to game scene to load the new level
   go("game");
+}
+
+// Modal System for Menu
+function showControlsModal() {
+  // Remove existing modal if any
+  hideModal();
+
+  // Create modal overlay
+  add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(0, 0, 0, 0.8),
+    fixed(),
+    z(200),
+    "modal",
+  ]);
+
+  // Modal background
+  add([
+    rect(500, 400),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    anchor("center"),
+    color(40, 40, 60),
+    outline(3, rgb(100, 100, 150)),
+    fixed(),
+    z(201),
+    "modal",
+  ]);
+
+  // Title
+  add([
+    text("CONTROLS", {
+      size: 24,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
+    anchor("center"),
+    color(255, 255, 0),
+    fixed(),
+    z(202),
+    "modal",
+  ]);
+
+  // Controls instructions
+  const instructions = [
+    "ARROW KEYS or Q/D - Move left/right",
+    "Z or UP ARROW - Jump",
+    "SPACE or E - Shoot Windball",
+    "",
+    "M - Mute/unmute audio",
+    "",
+    "Defeat dragons to unlock new powers!",
+    "Level 1: Water Dragon → Waterball",
+    "Level 2: Fire Dragon → Fireball",
+  ];
+
+  instructions.forEach((line, i) => {
+    if (line === "") return; // Skip empty lines
+    
+    add([
+      text(line, {
+        size: 14,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 100 + i * 20),
+      anchor("center"),
+      color(255, 255, 255),
+      fixed(),
+      z(202),
+      "modal",
+    ]);
+  });
+
+  // Close button
+  const closeButton = add([
+    rect(100, 40),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    anchor("center"),
+    color(200, 50, 50),
+    area(),
+    fixed(),
+    z(203),
+    "modal",
+  ]);
+
+  add([
+    text("CLOSE", {
+      size: 16,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(204),
+    "modal",
+  ]);
+
+  closeButton.onClick(() => hideModal());
+
+  // Close on escape key
+  onKeyPress("escape", () => hideModal());
+  
+  // Close on background click
+  get("modal")[0].onClick(() => hideModal());
+}
+
+function showCreditsModal() {
+  // Remove existing modal if any
+  hideModal();
+
+  // Create modal overlay
+  add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(0, 0, 0, 0.8),
+    fixed(),
+    z(200),
+    "modal",
+  ]);
+
+  // Modal background
+  add([
+    rect(500, 400),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    anchor("center"),
+    color(40, 40, 60),
+    outline(3, rgb(150, 100, 100)),
+    fixed(),
+    z(201),
+    "modal",
+  ]);
+
+  // Title
+  add([
+    text("CREDITS", {
+      size: 24,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
+    anchor("center"),
+    color(255, 255, 0),
+    fixed(),
+    z(202),
+    "modal",
+  ]);
+
+  // Placeholder text for future credits
+  add([
+    text("Credits will be added here", {
+      size: 18,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50),
+    anchor("center"),
+    color(200, 200, 200),
+    fixed(),
+    z(202),
+    "modal",
+  ]);
+
+  add([
+    text("Stay tuned for future updates!", {
+      size: 14,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 20),
+    anchor("center"),
+    color(150, 150, 150),
+    fixed(),
+    z(202),
+    "modal",
+  ]);
+
+  // Close button
+  const closeButton = add([
+    rect(100, 40),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    anchor("center"),
+    color(200, 50, 50),
+    area(),
+    fixed(),
+    z(203),
+    "modal",
+  ]);
+
+  add([
+    text("CLOSE", {
+      size: 16,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(204),
+    "modal",
+  ]);
+
+  closeButton.onClick(() => hideModal());
+
+  // Close on escape key
+  onKeyPress("escape", () => hideModal());
+  
+  // Close on background click
+  get("modal")[0].onClick(() => hideModal());
+}
+
+function hideModal() {
+  get("modal").forEach(destroy);
 }
 
 // Level, Player, Boss, and UI creation functions are now in separate files
