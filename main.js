@@ -962,33 +962,6 @@ function initializeScenes() {
     controlsButton.onClick(() => {
       console.log("Controls button clicked");
       try {
-        // Try a simple immediate test first
-        const simpleTest = add([
-          rect(200, 100),
-          pos(300, 250),
-          color(255, 0, 0),
-          fixed(),
-          z(1000),
-          "simpleTest",
-        ]);
-
-        const simpleText = add([
-          text("SIMPLE TEST", { size: 20, font: "sink" }),
-          pos(400, 300),
-          anchor("center"),
-          color(255, 255, 255),
-          fixed(),
-          z(1001),
-          "simpleTest",
-        ]);
-
-        console.log("🎮 Simple test elements created:", simpleTest, simpleText);
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-          get("simpleTest").forEach(destroy);
-        }, 3000);
-
         showControlsModal();
       } catch (error) {
         console.error("Error in showControlsModal:", error);
@@ -1613,14 +1586,14 @@ function showControlsModal() {
 
   console.log("🎮 Creating modal overlay...");
 
-  // Create modal overlay WITHOUT click area (testing)
+  // Create modal overlay with proper styling
   const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
-    color(255, 0, 0, 0.5), // RED for testing - should be visible
-    // area(), // REMOVED to prevent immediate click events
+    color(0, 0, 0, 0.8), // Dark overlay for proper modal background
+    area(), // Re-enabled for background clicks
     fixed(),
-    z(500), // Much higher z-index
+    z(200),
     "modal",
   ]);
 
@@ -1634,10 +1607,10 @@ function showControlsModal() {
     rect(500, 400),
     pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
     anchor("center"),
-    color(0, 255, 0), // GREEN for testing - should be visible
-    outline(5, rgb(255, 255, 255)), // White outline for visibility
+    color(40, 40, 60), // Proper dark blue background
+    outline(3, rgb(100, 100, 150)), // Subtle outline
     fixed(),
-    z(501), // Higher z-index
+    z(201),
     "modal",
   ]);
 
@@ -1649,14 +1622,14 @@ function showControlsModal() {
   console.log("🎮 Creating modal title...");
   const title = add([
     text("CONTROLS", {
-      size: 48, // Larger for testing
+      size: 24, // Normal size
       font: "sink",
     }),
     pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
     anchor("center"),
-    color(255, 0, 255), // MAGENTA for testing - should be visible
+    color(255, 255, 0), // Yellow title
     fixed(),
-    z(502), // Higher z-index
+    z(202),
     "modal",
   ]);
 
@@ -1725,21 +1698,13 @@ function showControlsModal() {
     hideModal();
   });
 
-  // TEMPORARILY DISABLE background click to test
-  // overlay.onClick(() => hideModal());
+  // Close on background click (but prevent immediate trigger)
+  overlay.onClick(() => {
+    console.log("🚨 Overlay clicked - closing modal");
+    hideModal();
+  });
 
-  // DEBUG: Add a test element that should definitely be visible
-  const testElement = add([
-    rect(100, 100),
-    pos(50, 50),
-    color(255, 255, 0), // YELLOW test square
-    fixed(),
-    z(1000), // Maximum z-index
-    "modal",
-  ]);
-
-  console.log("🎮 TEST ELEMENT created:", testElement);
-  console.log("🎮 Modal creation complete!");
+    console.log("🎮 Modal creation complete!");
 
   // Debug: Check if elements still exist after creation
   setTimeout(() => {
