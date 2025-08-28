@@ -637,6 +637,9 @@ async function loadGameAssets() {
     loadSprite("rightArrow", "./assets/left.png"); // We'll flip this
     loadSprite("fireIcon", "./assets/powers/windball.png"); // Default power icon
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
+    
+    // Load menu background
+    loadSprite("menuBackground", "./assets/menu_background.png");
 
     // Initialize AudioManager
     await audioManager.init();
@@ -799,18 +802,12 @@ function initializeScenes() {
     // Use AudioManager for menu transition
     audioManager.transitionToMenu();
 
-    // Background gradient
-    add([rect(GAME_WIDTH, GAME_HEIGHT), pos(0, 0), color(15, 10, 40), z(-10)]);
-
-    // Title
+    // Menu background image
     add([
-      text("SMASH DRAGONS", {
-        size: 48,
-        font: "sink",
-      }),
-      color(255, 200, 50),
-      pos(GAME_WIDTH / 2, 150),
-      anchor("center"),
+      sprite("menuBackground"),
+      pos(0, 0),
+      scale(1),
+      z(-10),
     ]);
 
     // Controls and Credits buttons
