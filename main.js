@@ -1431,7 +1431,10 @@ function showLevelSelector() {
       rect(400, 60),
       pos(GAME_WIDTH / 2 - 200, y - 30),
       color(buttonColor[0], buttonColor[1], buttonColor[2], 0.9), // Very opaque dark background
-      outline(3, rgb(buttonColor[0] + 60, buttonColor[1] + 60, buttonColor[2] + 60)), // Lighter outline
+      outline(
+        3,
+        rgb(buttonColor[0] + 60, buttonColor[1] + 60, buttonColor[2] + 60)
+      ), // Lighter outline
       fixed(),
       z(151),
       "levelSelector",
@@ -1576,50 +1579,57 @@ function showControlsModal() {
 
   console.log("🎮 Creating modal overlay...");
 
-  // Create modal overlay with click area
+    // Create modal overlay with click area
   const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
-    color(0, 0, 0, 0.8),
+    color(255, 0, 0, 0.5), // RED for testing - should be visible
     area(),
     fixed(),
-    z(200),
+    z(500), // Much higher z-index
     "modal",
   ]);
-
+  
   console.log("🎮 Overlay created:", overlay);
+  console.log("🎮 Overlay position:", overlay.pos);
+  console.log("🎮 Overlay z-index:", overlay.z);
 
-  // Modal background
+    // Modal background
   console.log("🎮 Creating modal background...");
   const modalBg = add([
     rect(500, 400),
     pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
     anchor("center"),
-    color(40, 40, 60),
-    outline(3, rgb(100, 100, 150)),
+    color(0, 255, 0), // GREEN for testing - should be visible
+    outline(5, rgb(255, 255, 255)), // White outline for visibility
     fixed(),
-    z(201),
+    z(501), // Higher z-index
     "modal",
   ]);
-
+  
   console.log("🎮 Modal background created:", modalBg);
+  console.log("🎮 Modal background position:", modalBg.pos);
+  console.log("🎮 Modal background z-index:", modalBg.z);
 
-  // Title
+    // Title
   console.log("🎮 Creating modal title...");
   const title = add([
     text("CONTROLS", {
-      size: 24,
+      size: 48, // Larger for testing
       font: "sink",
     }),
     pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
     anchor("center"),
-    color(255, 255, 0),
+    color(255, 0, 255), // MAGENTA for testing - should be visible
     fixed(),
-    z(202),
+    z(502), // Higher z-index
     "modal",
   ]);
-
+  
   console.log("🎮 Modal title created:", title);
+  console.log("🎮 Modal title position:", title.pos);
+  console.log("🎮 Modal title text:", title.text);
+  console.log("🎮 Modal title z-index:", title.z);
 
   // Controls instructions
   const instructions = [
@@ -1680,6 +1690,19 @@ function showControlsModal() {
 
   // Close on background click
   overlay.onClick(() => hideModal());
+  
+  // DEBUG: Add a test element that should definitely be visible
+  const testElement = add([
+    rect(100, 100),
+    pos(50, 50),
+    color(255, 255, 0), // YELLOW test square
+    fixed(),
+    z(1000), // Maximum z-index
+    "modal",
+  ]);
+  
+  console.log("🎮 TEST ELEMENT created:", testElement);
+  console.log("🎮 Modal creation complete!");
 }
 
 function showCreditsModal() {
