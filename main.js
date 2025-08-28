@@ -794,6 +794,8 @@ function initializeScenes() {
   console.log("Initializing scenes...");
   // Main Menu Scene
   scene("menu", () => {
+    console.log("Menu scene initialized");
+
     // Use AudioManager for menu transition
     audioManager.transitionToMenu();
 
@@ -821,6 +823,7 @@ function initializeScenes() {
       "controlsButton",
       {
         isHovered: false,
+        debug: "controlsButton",
       },
     ]);
 
@@ -844,6 +847,7 @@ function initializeScenes() {
       "creditsButton",
       {
         isHovered: false,
+        debug: "creditsButton",
       },
     ]);
 
@@ -960,21 +964,37 @@ function initializeScenes() {
 
     // Controls button click handler
     controlsButton.onClick(() => {
-      console.log("Controls button clicked");
+      console.log("Controls button clicked - attempting to show modal");
+      audioManager.enableUserInteraction(); // Enable audio interaction
+
       try {
-        showControlsModal();
+        // Small delay to ensure proper event handling
+        setTimeout(() => {
+          showControlsModal();
+        }, 50);
       } catch (error) {
         console.error("Error in showControlsModal:", error);
+        // Fallback: show simple alert
+        alert(
+          "Controls:\n\nArrow Keys or Q/D - Move\nZ or Up Arrow - Jump\nSpace or E - Shoot\nM - Mute audio"
+        );
       }
     });
 
     // Credits button click handler
     creditsButton.onClick(() => {
-      console.log("Credits button clicked");
+      console.log("Credits button clicked - attempting to show modal");
+      audioManager.enableUserInteraction(); // Enable audio interaction
+
       try {
-        showCreditsModal();
+        // Small delay to ensure proper event handling
+        setTimeout(() => {
+          showCreditsModal();
+        }, 50);
       } catch (error) {
         console.error("Error in showCreditsModal:", error);
+        // Fallback: show simple alert
+        alert("Credits:\nDeveloped by Nicolas Rabault and Aron R.");
       }
     });
 
@@ -1571,178 +1591,313 @@ function switchToLevel(targetLevel) {
 
 // Simple Modal System for Menu - CLEAN VERSION
 function showControlsModal() {
+  console.log("Opening Controls Modal");
+
   // Clean slate - remove any existing modals
   get("modal").forEach(destroy);
 
-  // Create modal overlay
-  add([
-    rect(800, 600),
+  // Create modal overlay with higher z-index
+  const overlay = add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
-    color(0, 0, 0, 0.8),
+    color(0, 0, 0, 0.85),
     area(),
     fixed(),
-    z(100),
-    "modal",
-  ]).onClick(() => get("modal").forEach(destroy));
-
-  // Create modal background
-  add([
-    rect(500, 400),
-    pos(400, 300),
-    anchor("center"),
-    color(40, 40, 60),
-    outline(3, rgb(100, 100, 150)),
-    fixed(),
-    z(101),
+    z(200),
     "modal",
   ]);
 
-  // Title
+  // Create modal background with area for proper interaction
+  const modalBg = add([
+    rect(600, 500),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    anchor("center"),
+    color(30, 30, 50),
+    outline(4, rgb(80, 80, 120)),
+    area(),
+    fixed(),
+    z(201),
+    "modal",
+  ]);
+
+  // Title with better styling
   add([
-    text("CONTROLS", { size: 24, font: "sink" }),
-    pos(400, 150),
+    text("GAME CONTROLS", {
+      size: 28,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 200),
     anchor("center"),
     color(255, 255, 0),
     fixed(),
-    z(102),
+    z(202),
     "modal",
   ]);
 
-  // Instructions
+  // Instructions with better formatting
   const instructions = [
-    "ARROW KEYS or Q/D - Move left/right",
-    "Z or UP ARROW - Jump", 
-    "SPACE or E - Shoot Windball",
+    "🎮 MOVEMENT",
+    "Arrow Keys or Q/D - Move left/right",
+    "Z or Up Arrow - Jump",
     "",
-    "M - Mute/unmute audio",
-    "",
+    "⚡ COMBAT",
+    "Space or E - Shoot Windball or other powers",
+    "C/X - switch between powers",
     "Defeat dragons to unlock new powers!",
-    "Level 1: Water Dragon → Waterball",
-    "Level 2: Fire Dragon → Fireball",
+    "",
   ];
 
-  let yPos = 200;
+  let yPos = GAME_HEIGHT / 2 - 140;
   instructions.forEach((line) => {
     if (line === "") {
-      yPos += 15;
+      yPos += 10;
       return;
     }
-    
+
+    const textColor =
+      line.includes("🎮") ||
+      line.includes("⚡") ||
+      line.includes("🎵") ||
+      line.includes("🐉")
+        ? rgb(255, 200, 100)
+        : rgb(255, 255, 255);
+
+    const textSize =
+      line.includes("🎮") ||
+      line.includes("⚡") ||
+      line.includes("🎵") ||
+      line.includes("🐉")
+        ? 16
+        : 14;
+
     add([
-      text(line, { size: 14, font: "sink" }),
-      pos(400, yPos),
+      text(line, {
+        size: textSize,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, yPos),
       anchor("center"),
-      color(255, 255, 255),
+      color(textColor),
       fixed(),
-      z(102),
+      z(202),
+      "modal",
+    ]);
+    yPos += 22;
+  });
+
+  // Close button with better styling
+  const closeButton = add([
+    rect(120, 45),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 180),
+    anchor("center"),
+    color(180, 60, 60),
+    outline(2, rgb(220, 100, 100)),
+    area(),
+    fixed(),
+    z(203),
+    "modal",
+  ]);
+
+  add([
+    text("CLOSE", {
+      size: 18,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 180),
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(204),
+    "modal",
+  ]);
+
+  // Close button hover effect
+  closeButton.onUpdate(() => {
+    const mouse = mousePos();
+    const isHovering = closeButton.hasPoint(mouse);
+
+    if (isHovering) {
+      closeButton.color = rgb(220, 80, 80);
+      if (document.body) document.body.style.cursor = "pointer";
+    } else {
+      closeButton.color = rgb(180, 60, 60);
+      if (document.body) document.body.style.cursor = "default";
+    }
+  });
+
+  // Close handlers
+  const closeModal = () => {
+    console.log("Closing Controls Modal");
+    get("modal").forEach(destroy);
+  };
+
+  closeButton.onClick(closeModal);
+  overlay.onClick(closeModal);
+
+  // Keyboard close
+  onKeyPress("escape", closeModal);
+  onKeyPress("space", closeModal);
+  onKeyPress("enter", closeModal);
+}
+
+function showCreditsModal() {
+  console.log("Opening Credits Modal");
+
+  // Clean slate - remove any existing modals
+  get("modal").forEach(destroy);
+
+  // Create modal overlay with higher z-index
+  const overlay = add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(0, 0, 0, 0.85),
+    area(),
+    fixed(),
+    z(200),
+    "modal",
+  ]);
+
+  // Create modal background with area for proper interaction
+  const modalBg = add([
+    rect(600, 500),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    anchor("center"),
+    color(30, 30, 50),
+    outline(4, rgb(120, 80, 80)),
+    area(),
+    fixed(),
+    z(201),
+    "modal",
+  ]);
+
+  // Title with better styling
+  add([
+    text("GAME CREDITS", {
+      size: 28,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 200),
+    anchor("center"),
+    color(255, 255, 0),
+    fixed(),
+    z(202),
+    "modal",
+  ]);
+
+  // Credits content with better formatting
+  const credits = [
+    "🎮 GAME DEVELOPMENT",
+    "Nicolas Rabault",
+    "Aron R.",
+    "",
+    "🎨 ASSETS, DESIGN, & CODE",
+    "Completely made by AI",
+    "",
+    "🎵 AUDIO",
+    "    retro-synthwave-background-soundtrack-341853.wav",
+    "    cyberpunk-synthwave-351505.wav",
+    "    dark-synthwave-spectral-251688.wav",
+  ];
+
+  let yPos = GAME_HEIGHT / 2 - 140;
+  credits.forEach((line) => {
+    if (line === "") {
+      yPos += 8;
+      return;
+    }
+
+    const textColor =
+      line.includes("🎮") ||
+      line.includes("👨‍💻") ||
+      line.includes("🎨") ||
+      line.includes("🎵") ||
+      line.includes("🚀") ||
+      line.includes("📱")
+        ? rgb(255, 200, 100)
+        : line.startsWith("•")
+        ? rgb(200, 255, 200)
+        : rgb(255, 255, 255);
+
+    const textSize =
+      line.includes("🎮") ||
+      line.includes("👨‍💻") ||
+      line.includes("🎨") ||
+      line.includes("🎵") ||
+      line.includes("🚀") ||
+      line.includes("📱")
+        ? 16
+        : line.startsWith("•")
+        ? 13
+        : 14;
+
+    add([
+      text(line, {
+        size: textSize,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, yPos),
+      anchor("center"),
+      color(textColor),
+      fixed(),
+      z(202),
       "modal",
     ]);
     yPos += 20;
   });
 
-  // Close button
-  add([
-    rect(100, 40),
-    pos(400, 420),
+  // Close button with better styling
+  const closeButton = add([
+    rect(120, 45),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 180),
     anchor("center"),
-    color(200, 50, 50),
+    color(180, 60, 60),
+    outline(2, rgb(220, 100, 100)),
     area(),
     fixed(),
-    z(103),
-    "modal",
-  ]).onClick(() => get("modal").forEach(destroy));
-
-  add([
-    text("CLOSE", { size: 16, font: "sink" }),
-    pos(400, 420),
-    anchor("center"), 
-    color(255, 255, 255),
-    fixed(),
-    z(104),
-    "modal",
-  ]);
-}
-
-function showCreditsModal() {
-  // Clean slate - remove any existing modals
-  get("modal").forEach(destroy);
-
-  // Create modal overlay
-  add([
-    rect(800, 600),
-    pos(0, 0),
-    color(0, 0, 0, 0.8),
-    area(),
-    fixed(),
-    z(100),
-    "modal",
-  ]).onClick(() => get("modal").forEach(destroy));
-
-  // Create modal background
-  add([
-    rect(500, 400),
-    pos(400, 300),
-    anchor("center"),
-    color(40, 40, 60),
-    outline(3, rgb(150, 100, 100)),
-    fixed(),
-    z(101),
-    "modal",
-  ]);
-
-  // Title
-  add([
-    text("CREDITS", { size: 24, font: "sink" }),
-    pos(400, 150),
-    anchor("center"),
-    color(255, 255, 0),
-    fixed(),
-    z(102),
-    "modal",
-  ]);
-
-  // Placeholder text
-  add([
-    text("Credits will be added here", { size: 18, font: "sink" }),
-    pos(400, 250),
-    anchor("center"),
-    color(200, 200, 200),
-    fixed(),
-    z(102),
+    z(203),
     "modal",
   ]);
 
   add([
-    text("Stay tuned for future updates!", { size: 14, font: "sink" }),
-    pos(400, 280),
-    anchor("center"),
-    color(150, 150, 150),
-    fixed(),
-    z(102),
-    "modal",
-  ]);
-
-  // Close button
-  add([
-    rect(100, 40),
-    pos(400, 420),
-    anchor("center"),
-    color(200, 50, 50),
-    area(),
-    fixed(),
-    z(103),
-    "modal",
-  ]).onClick(() => get("modal").forEach(destroy));
-
-  add([
-    text("CLOSE", { size: 16, font: "sink" }),
-    pos(400, 420),
+    text("CLOSE", {
+      size: 18,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 180),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
-    z(104),
+    z(204),
     "modal",
   ]);
+
+  // Close button hover effect
+  closeButton.onUpdate(() => {
+    const mouse = mousePos();
+    const isHovering = closeButton.hasPoint(mouse);
+
+    if (isHovering) {
+      closeButton.color = rgb(220, 80, 80);
+      if (document.body) document.body.style.cursor = "pointer";
+    } else {
+      closeButton.color = rgb(180, 60, 60);
+      if (document.body) document.body.style.cursor = "default";
+    }
+  });
+
+  // Close handlers
+  const closeModal = () => {
+    console.log("Closing Credits Modal");
+    get("modal").forEach(destroy);
+  };
+
+  closeButton.onClick(closeModal);
+  overlay.onClick(closeModal);
+
+  // Keyboard close
+  onKeyPress("escape", closeModal);
+  onKeyPress("space", closeModal);
+  onKeyPress("enter", closeModal);
 }
 
 // Level, Player, Boss, and UI creation functions are now in separate files
