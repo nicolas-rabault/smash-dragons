@@ -961,13 +961,21 @@ function initializeScenes() {
     // Controls button click handler
     controlsButton.onClick(() => {
       console.log("Controls button clicked");
-      showControlsModal();
+      try {
+        showControlsModal();
+      } catch (error) {
+        console.error("Error in showControlsModal:", error);
+      }
     });
 
     // Credits button click handler
     creditsButton.onClick(() => {
       console.log("Credits button clicked");
-      showCreditsModal();
+      try {
+        showCreditsModal();
+      } catch (error) {
+        console.error("Error in showCreditsModal:", error);
+      }
     });
 
     // Add touch events for mobile
@@ -1244,7 +1252,7 @@ function initializeScenes() {
 
 // Debug System for Development
 function setupDebugControls() {
-  console.log("🔧 Debug controls initialized for scene:", getScene());
+  console.log("🔧 Debug controls initialized");
   console.log("  [F1] - Toggle platform debug info");
   console.log("  [F2] - Toggle level selector");
   console.log("  [1] - Quick switch to Level 1");
@@ -1266,7 +1274,6 @@ function setupDebugControls() {
   // Toggle level selector
   onKeyPress("f2", () => {
     console.log("🔧 F2 pressed - toggling level selector");
-    console.log("🔧 Current scene:", getScene());
     console.log("🔧 Debug state:", debug);
 
     debug.levelSelector = !debug.levelSelector;
@@ -1531,10 +1538,12 @@ function hideLevelSelector() {
 }
 
 function switchToLevel(targetLevel) {
-  console.log(`🔧 switchToLevel called with: ${targetLevel} (type: ${typeof targetLevel})`);
+  console.log(
+    `🔧 switchToLevel called with: ${targetLevel} (type: ${typeof targetLevel})`
+  );
   console.log(`🔧 LEVEL_DATA keys:`, Object.keys(LEVEL_DATA));
   console.log(`🔧 LEVEL_DATA[${targetLevel}]:`, LEVEL_DATA[targetLevel]);
-  
+
   if (!LEVEL_DATA[targetLevel]) {
     console.log(`🔧 Level ${targetLevel} does not exist`);
     return;
@@ -1542,7 +1551,7 @@ function switchToLevel(targetLevel) {
 
   console.log(`🔧 Switching to Level ${targetLevel}`);
   console.log(`🔧 Current gameState:`, gameState);
-  
+
   // Update game state
   gameState.level = targetLevel;
   gameState.bossDefeated = false;
@@ -1658,14 +1667,6 @@ function showControlsModal() {
 
   // Close on background click
   overlay.onClick(() => hideModal());
-
-  // Close on escape key - add cleanup for escape handler
-  const escapeHandler = onKeyPress("escape", () => {
-    hideModal();
-  });
-
-  // Store escape handler for cleanup
-  closeButton.escapeHandler = escapeHandler;
 }
 
 function showCreditsModal() {
@@ -1765,14 +1766,6 @@ function showCreditsModal() {
 
   // Close on background click
   overlay.onClick(() => hideModal());
-
-  // Close on escape key - add cleanup for escape handler
-  const escapeHandler = onKeyPress("escape", () => {
-    hideModal();
-  });
-
-  // Store escape handler for cleanup
-  closeButton.escapeHandler = escapeHandler;
 }
 
 function hideModal() {
