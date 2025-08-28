@@ -810,55 +810,6 @@ function initializeScenes() {
       z(-10),
     ]);
 
-    // Controls and Credits buttons
-    const controlsButton = add([
-      rect(180, 50),
-      pos(GAME_WIDTH / 2 - 100, 300),
-      anchor("center"),
-      color(70, 70, 150),
-      area(),
-      "controlsButton",
-      {
-        isHovered: false,
-        debug: "controlsButton",
-      },
-    ]);
-
-    const controlsButtonText = add([
-      text("CONTROLS", {
-        size: 16,
-        font: "sink",
-      }),
-      pos(GAME_WIDTH / 2 - 100, 300),
-      anchor("center"),
-      color(255, 255, 255),
-      z(10),
-    ]);
-
-    const creditsButton = add([
-      rect(180, 50),
-      pos(GAME_WIDTH / 2 + 100, 300),
-      anchor("center"),
-      color(150, 70, 70),
-      area(),
-      "creditsButton",
-      {
-        isHovered: false,
-        debug: "creditsButton",
-      },
-    ]);
-
-    const creditsButtonText = add([
-      text("CREDITS", {
-        size: 16,
-        font: "sink",
-      }),
-      pos(GAME_WIDTH / 2 + 100, 300),
-      anchor("center"),
-      color(255, 255, 255),
-      z(10),
-    ]);
-
     // Create clickable start button
     const startButton = add([
       rect(200, 60),
@@ -879,6 +830,55 @@ function initializeScenes() {
         font: "sink",
       }),
       pos(GAME_WIDTH / 2, 450),
+      anchor("center"),
+      color(255, 255, 255),
+      z(10),
+    ]);
+
+    // Controls and Credits buttons (positioned below Start Game)
+    const controlsButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 - 100, 530),
+      anchor("center"),
+      color(70, 70, 150),
+      area(),
+      "controlsButton",
+      {
+        isHovered: false,
+        debug: "controlsButton",
+      },
+    ]);
+
+    const controlsButtonText = add([
+      text("CONTROLS", {
+        size: 16,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2 - 100, 530),
+      anchor("center"),
+      color(255, 255, 255),
+      z(10),
+    ]);
+
+    const creditsButton = add([
+      rect(180, 50),
+      pos(GAME_WIDTH / 2 + 100, 530),
+      anchor("center"),
+      color(150, 70, 70),
+      area(),
+      "creditsButton",
+      {
+        isHovered: false,
+        debug: "creditsButton",
+      },
+    ]);
+
+    const creditsButtonText = add([
+      text("CREDITS", {
+        size: 16,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2 + 100, 530),
       anchor("center"),
       color(255, 255, 255),
       z(10),
