@@ -826,19 +826,19 @@ function initializeScenes() {
 
     const controlsButtonText = add([
       text("CONTROLS", {
-          size: 16,
-          font: "sink",
-        }),
+        size: 16,
+        font: "sink",
+      }),
       pos(GAME_WIDTH / 2 - 100, 300),
       anchor("center"),
-        color(255, 255, 255),
+      color(255, 255, 255),
       z(10),
     ]);
 
     const creditsButton = add([
       rect(180, 50),
       pos(GAME_WIDTH / 2 + 100, 300),
-        anchor("center"),
+      anchor("center"),
       color(150, 70, 70),
       area(),
       "creditsButton",
@@ -1569,79 +1569,49 @@ function switchToLevel(targetLevel) {
   go("game");
 }
 
-// Modal System for Menu
+// Simple Modal System for Menu - CLEAN VERSION
 function showControlsModal() {
-  console.log("🎮 showControlsModal() started");
-  console.log("🎮 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
+  // Clean slate - remove any existing modals
+  get("modal").forEach(destroy);
 
-  // Debug: Check all existing objects in the scene
-  console.log("🎮 All objects in scene:", get("*").length);
-  console.log("🎮 Existing modal objects:", get("modal").length);
-
-  // Remove existing modal if any
-  hideModal();
-
-  // Log existing objects after cleanup
-  console.log("🎮 Objects after hideModal:", get("*").length);
-
-  console.log("🎮 Creating modal overlay...");
-
-  // Create modal overlay with proper styling
-  const overlay = add([
-    rect(GAME_WIDTH, GAME_HEIGHT),
+  // Create modal overlay
+  add([
+    rect(800, 600),
     pos(0, 0),
-    color(0, 0, 0, 0.8), // Dark overlay for proper modal background
-    area(), // Re-enabled for background clicks
+    color(0, 0, 0, 0.8),
+    area(),
     fixed(),
-    z(200),
+    z(100),
     "modal",
-  ]);
+  ]).onClick(() => get("modal").forEach(destroy));
 
-  console.log("🎮 Overlay created:", overlay);
-  console.log("🎮 Overlay position:", overlay.pos);
-  console.log("🎮 Overlay z-index:", overlay.z);
-
-  // Modal background
-  console.log("🎮 Creating modal background...");
-  const modalBg = add([
+  // Create modal background
+  add([
     rect(500, 400),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    pos(400, 300),
     anchor("center"),
-    color(40, 40, 60), // Proper dark blue background
-    outline(3, rgb(100, 100, 150)), // Subtle outline
+    color(40, 40, 60),
+    outline(3, rgb(100, 100, 150)),
     fixed(),
-    z(201),
+    z(101),
     "modal",
   ]);
-
-  console.log("🎮 Modal background created:", modalBg);
-  console.log("🎮 Modal background position:", modalBg.pos);
-  console.log("🎮 Modal background z-index:", modalBg.z);
 
   // Title
-  console.log("🎮 Creating modal title...");
-  const title = add([
-    text("CONTROLS", {
-      size: 24, // Normal size
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
+  add([
+    text("CONTROLS", { size: 24, font: "sink" }),
+    pos(400, 150),
     anchor("center"),
-    color(255, 255, 0), // Yellow title
+    color(255, 255, 0),
     fixed(),
-    z(202),
+    z(102),
     "modal",
   ]);
 
-  console.log("🎮 Modal title created:", title);
-  console.log("🎮 Modal title position:", title.pos);
-  console.log("🎮 Modal title text:", title.text);
-  console.log("🎮 Modal title z-index:", title.z);
-
-  // Controls instructions
+  // Instructions
   const instructions = [
     "ARROW KEYS or Q/D - Move left/right",
-    "Z or UP ARROW - Jump",
+    "Z or UP ARROW - Jump", 
     "SPACE or E - Shoot Windball",
     "",
     "M - Mute/unmute audio",
@@ -1651,188 +1621,128 @@ function showControlsModal() {
     "Level 2: Fire Dragon → Fireball",
   ];
 
-  instructions.forEach((line, i) => {
-    if (line === "") return; // Skip empty lines
-
+  let yPos = 200;
+  instructions.forEach((line) => {
+    if (line === "") {
+      yPos += 15;
+      return;
+    }
+    
     add([
-      text(line, {
-        size: 14,
-        font: "sink",
-      }),
-      pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 100 + i * 20),
+      text(line, { size: 14, font: "sink" }),
+      pos(400, yPos),
       anchor("center"),
       color(255, 255, 255),
       fixed(),
-      z(202),
+      z(102),
       "modal",
     ]);
+    yPos += 20;
   });
 
   // Close button
-  const closeButton = add([
+  add([
     rect(100, 40),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    pos(400, 420),
     anchor("center"),
     color(200, 50, 50),
     area(),
     fixed(),
-    z(203),
+    z(103),
     "modal",
-  ]);
+  ]).onClick(() => get("modal").forEach(destroy));
 
   add([
-    text("CLOSE", {
-      size: 16,
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
-    anchor("center"),
+    text("CLOSE", { size: 16, font: "sink" }),
+    pos(400, 420),
+    anchor("center"), 
     color(255, 255, 255),
     fixed(),
-    z(204),
+    z(104),
     "modal",
   ]);
-
-  closeButton.onClick(() => {
-    console.log("🚨 Close button clicked - closing modal");
-    hideModal();
-  });
-
-  // Close on background click (but prevent immediate trigger)
-  overlay.onClick(() => {
-    console.log("🚨 Overlay clicked - closing modal");
-    hideModal();
-  });
-
-    console.log("🎮 Modal creation complete!");
-
-  // Debug: Check if elements still exist after creation
-  setTimeout(() => {
-    console.log(
-      "🎮 AFTER 100ms - Modal objects still exist:",
-      get("modal").length
-    );
-    console.log("🎮 AFTER 100ms - Overlay still exists:", overlay.exists());
-    console.log(
-      "🎮 AFTER 100ms - Modal background still exists:",
-      modalBg.exists()
-    );
-    console.log("🎮 AFTER 100ms - Title still exists:", title.exists());
-    console.log(
-      "🎮 AFTER 100ms - Test element still exists:",
-      testElement.exists()
-    );
-  }, 100);
 }
 
 function showCreditsModal() {
-  console.log("🏆 showCreditsModal() started");
-  console.log("🏆 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
+  // Clean slate - remove any existing modals
+  get("modal").forEach(destroy);
 
-  // Remove existing modal if any
-  hideModal();
-
-  // Create modal overlay with click area
-  const overlay = add([
-    rect(GAME_WIDTH, GAME_HEIGHT),
+  // Create modal overlay
+  add([
+    rect(800, 600),
     pos(0, 0),
     color(0, 0, 0, 0.8),
     area(),
     fixed(),
-    z(200),
+    z(100),
     "modal",
-  ]);
+  ]).onClick(() => get("modal").forEach(destroy));
 
-  // Modal background
+  // Create modal background
   add([
     rect(500, 400),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2),
+    pos(400, 300),
     anchor("center"),
     color(40, 40, 60),
     outline(3, rgb(150, 100, 100)),
     fixed(),
-    z(201),
+    z(101),
     "modal",
   ]);
 
   // Title
   add([
-    text("CREDITS", {
-      size: 24,
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150),
+    text("CREDITS", { size: 24, font: "sink" }),
+    pos(400, 150),
     anchor("center"),
     color(255, 255, 0),
     fixed(),
-    z(202),
+    z(102),
     "modal",
   ]);
 
-  // Placeholder text for future credits
+  // Placeholder text
   add([
-    text("Credits will be added here", {
-      size: 18,
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50),
+    text("Credits will be added here", { size: 18, font: "sink" }),
+    pos(400, 250),
     anchor("center"),
     color(200, 200, 200),
     fixed(),
-    z(202),
+    z(102),
     "modal",
   ]);
 
   add([
-    text("Stay tuned for future updates!", {
-      size: 14,
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 20),
+    text("Stay tuned for future updates!", { size: 14, font: "sink" }),
+    pos(400, 280),
     anchor("center"),
     color(150, 150, 150),
     fixed(),
-    z(202),
+    z(102),
     "modal",
   ]);
 
   // Close button
-  const closeButton = add([
+  add([
     rect(100, 40),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    pos(400, 420),
     anchor("center"),
     color(200, 50, 50),
     area(),
     fixed(),
-    z(203),
+    z(103),
     "modal",
-  ]);
+  ]).onClick(() => get("modal").forEach(destroy));
 
   add([
-    text("CLOSE", {
-      size: 16,
-      font: "sink",
-    }),
-    pos(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120),
+    text("CLOSE", { size: 16, font: "sink" }),
+    pos(400, 420),
     anchor("center"),
     color(255, 255, 255),
     fixed(),
-    z(204),
+    z(104),
     "modal",
   ]);
-
-  closeButton.onClick(() => hideModal());
-
-  // Close on background click
-  overlay.onClick(() => hideModal());
-}
-
-function hideModal() {
-  console.log("🚨 hideModal() called! Stack trace:");
-  console.trace();
-  const modalElements = get("modal");
-  console.log("🚨 Destroying", modalElements.length, "modal elements");
-  modalElements.forEach(destroy);
 }
 
 // Level, Player, Boss, and UI creation functions are now in separate files
