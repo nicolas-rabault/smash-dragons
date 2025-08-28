@@ -360,12 +360,15 @@ class AudioManager {
     console.log("Audio transition: -> Game");
     this.currentScene = "game";
     this.stopAll();
-    
+
     // Play appropriate ambience based on current level
-    const ambienceId = gameState.level === 1 ? "magmaAmbience" : 
-                      gameState.level === 2 ? "fireAmbience" : 
-                      "magmaAmbience"; // fallback
-    
+    const ambienceId =
+      gameState.level === 1
+        ? "magmaAmbience"
+        : gameState.level === 2
+        ? "fireAmbience"
+        : "magmaAmbience"; // fallback
+
     this.playAmbience(ambienceId);
   }
 
@@ -570,10 +573,7 @@ async function loadGameAssets() {
     );
 
     // Load foreground for parallax effect
-    loadSprite(
-      "level1Foreground",
-      "./assets/level1/level1_foreground.png"
-    );
+    loadSprite("level1Foreground", "./assets/level1/level1_foreground.png");
 
     // Load level 2 animated background frames
     loadSprite(
@@ -626,12 +626,11 @@ async function loadGameAssets() {
     );
 
     // Load level 2 foreground for parallax effect
-    loadSprite(
-      "level2Foreground",
-      "./assets/level2/level2_foreground.png"
-    );
+    loadSprite("level2Foreground", "./assets/level2/level2_foreground.png");
 
-    console.log("Loading animated background frames and foreground for all levels...");
+    console.log(
+      "Loading animated background frames and foreground for all levels..."
+    );
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
@@ -764,9 +763,6 @@ window.addEventListener("load", async () => {
     );
   });
 
-  // Debug controls (available in all scenes)
-  setupDebugControls();
-
   // Start with main menu
   go("menu");
 
@@ -815,17 +811,6 @@ function initializeScenes() {
       anchor("center"),
     ]);
 
-    // Subtitle
-    add([
-      text("Enhanced Edition", {
-        size: 24,
-        font: "sink",
-      }),
-      color(200, 150, 255),
-      pos(GAME_WIDTH / 2, 200),
-      anchor("center"),
-    ]);
-
     // Controls and Credits buttons
     const controlsButton = add([
       rect(180, 50),
@@ -871,17 +856,6 @@ function initializeScenes() {
       anchor("center"),
       color(255, 255, 255),
       z(10),
-    ]);
-
-    // Audio controls info (kept small)
-    add([
-      text("Press M to mute/unmute audio", {
-        size: 14,
-        font: "sink",
-      }),
-      color(180, 180, 180),
-      pos(GAME_WIDTH / 2, 360),
-      anchor("center"),
     ]);
 
     // Create clickable start button
@@ -1262,12 +1236,15 @@ function initializeScenes() {
 
     // Mobile controls
     setupMobileControls(player);
+
+    // Debug controls (specific to game scene)
+    setupDebugControls();
   });
 }
 
 // Debug System for Development
 function setupDebugControls() {
-  console.log("🔧 Debug controls initialized:");
+  console.log("🔧 Debug controls initialized for scene:", getScene());
   console.log("  [F1] - Toggle platform debug info");
   console.log("  [F2] - Toggle level selector");
   console.log("  [1] - Quick switch to Level 1");
@@ -1275,9 +1252,10 @@ function setupDebugControls() {
 
   // Toggle platform debug info
   onKeyPress("f1", () => {
+    console.log("🔧 F1 pressed - toggling platform debug");
     debug.inspectMode = !debug.inspectMode;
     console.log(`🔧 Platform debug mode: ${debug.inspectMode ? "ON" : "OFF"}`);
-    
+
     if (debug.inspectMode) {
       showDebugInfo();
     } else {
@@ -1287,11 +1265,20 @@ function setupDebugControls() {
 
   // Toggle level selector
   onKeyPress("f2", () => {
+    console.log("🔧 F2 pressed - toggling level selector");
+    console.log("🔧 Current scene:", getScene());
+    console.log("🔧 Debug state:", debug);
+
     debug.levelSelector = !debug.levelSelector;
-    
+    console.log(
+      `🔧 Level selector mode: ${debug.levelSelector ? "ON" : "OFF"}`
+    );
+
     if (debug.levelSelector) {
+      console.log("🔧 Showing level selector...");
       showLevelSelector();
     } else {
+      console.log("🔧 Hiding level selector...");
       hideLevelSelector();
     }
   });
@@ -1299,12 +1286,14 @@ function setupDebugControls() {
   // Quick level switches
   onKeyPress("1", () => {
     if (debug.enabled) {
+      console.log("🔧 Quick switch to Level 1");
       switchToLevel(1);
     }
   });
 
   onKeyPress("2", () => {
     if (debug.enabled) {
+      console.log("🔧 Quick switch to Level 2");
       switchToLevel(2);
     }
   });
@@ -1348,12 +1337,15 @@ function showDebugInfo() {
     player.onUpdate(() => {
       // Remove old position display
       get("debugPlayerPos").forEach(destroy);
-      
+
       add([
-        text(`Player: (${Math.round(player.pos.x)}, ${Math.round(player.pos.y)})`, {
-          size: 12,
-          font: "sink",
-        }),
+        text(
+          `Player: (${Math.round(player.pos.x)}, ${Math.round(player.pos.y)})`,
+          {
+            size: 12,
+            font: "sink",
+          }
+        ),
         pos(10, 150),
         color(100, 255, 100),
         fixed(),
@@ -1381,11 +1373,15 @@ function hideDebugInfo() {
 }
 
 function showLevelSelector() {
+  console.log("🔧 showLevelSelector() called");
+  console.log("🔧 LEVEL_DATA:", LEVEL_DATA);
+  console.log("🔧 gameState.level:", gameState.level);
+
   // Remove existing level selector
   hideLevelSelector();
 
   // Create level selector overlay
-  add([
+  const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
     color(0, 0, 0, 0.8),
@@ -1393,6 +1389,8 @@ function showLevelSelector() {
     z(150),
     "levelSelector",
   ]);
+
+  console.log("🔧 Overlay created:", overlay);
 
   add([
     text("LEVEL SELECTOR", {
@@ -1409,10 +1407,16 @@ function showLevelSelector() {
 
   // Level buttons
   const levels = Object.keys(LEVEL_DATA);
+  console.log("🔧 Available levels:", levels);
+
   levels.forEach((levelId, index) => {
     const levelData = LEVEL_DATA[levelId];
     const y = 250 + index * 80;
     const isCurrentLevel = parseInt(levelId) === gameState.level;
+
+    console.log(
+      `🔧 Creating level button ${index}: Level ${levelId} at y=${y}`
+    );
 
     // Level button background
     const buttonColor = isCurrentLevel ? [100, 255, 100] : [100, 100, 200];
@@ -1441,10 +1445,15 @@ function showLevelSelector() {
     ]);
 
     add([
-      text(`Boss: ${BOSS_TYPES[levelData.boss].name} | Platforms: ${levelData.platforms.length}`, {
-        size: 14,
-        font: "sink",
-      }),
+      text(
+        `Boss: ${BOSS_TYPES[levelData.boss].name} | Platforms: ${
+          levelData.platforms.length
+        }`,
+        {
+          size: 14,
+          font: "sink",
+        }
+      ),
       pos(GAME_WIDTH / 2, y + 10),
       anchor("center"),
       color(200, 200, 200),
@@ -1454,7 +1463,7 @@ function showLevelSelector() {
     ]);
 
     // Click area for level selection
-    add([
+    const clickArea = add([
       rect(400, 60),
       pos(GAME_WIDTH / 2 - 200, y - 30),
       area(),
@@ -1464,7 +1473,12 @@ function showLevelSelector() {
       {
         level: parseInt(levelId),
       },
-    ]).onClick(() => {
+    ]);
+
+    console.log(`🔧 Click area created for level ${levelId}:`, clickArea);
+
+    clickArea.onClick(() => {
+      console.log(`🔧 Level ${levelId} clicked! Switching...`);
       switchToLevel(parseInt(levelId));
       hideLevelSelector();
     });
@@ -1517,12 +1531,17 @@ function hideLevelSelector() {
 }
 
 function switchToLevel(targetLevel) {
+  console.log(`🔧 switchToLevel called with: ${targetLevel} (type: ${typeof targetLevel})`);
+  console.log(`🔧 LEVEL_DATA keys:`, Object.keys(LEVEL_DATA));
+  console.log(`🔧 LEVEL_DATA[${targetLevel}]:`, LEVEL_DATA[targetLevel]);
+  
   if (!LEVEL_DATA[targetLevel]) {
     console.log(`🔧 Level ${targetLevel} does not exist`);
     return;
   }
 
   console.log(`🔧 Switching to Level ${targetLevel}`);
+  console.log(`🔧 Current gameState:`, gameState);
   
   // Update game state
   gameState.level = targetLevel;
@@ -1530,6 +1549,9 @@ function switchToLevel(targetLevel) {
   gameState.bossEncounterStarted = false;
   gameState.bossSpawned = false;
   gameState.playerInBossArea = false;
+
+  console.log(`🔧 Updated gameState:`, gameState);
+  console.log(`🔧 Going to game scene...`);
 
   // Go to game scene to load the new level
   go("game");
@@ -1592,7 +1614,7 @@ function showControlsModal() {
 
   instructions.forEach((line, i) => {
     if (line === "") return; // Skip empty lines
-    
+
     add([
       text(line, {
         size: 14,
@@ -1641,7 +1663,7 @@ function showControlsModal() {
   const escapeHandler = onKeyPress("escape", () => {
     hideModal();
   });
-  
+
   // Store escape handler for cleanup
   closeButton.escapeHandler = escapeHandler;
 }
@@ -1748,7 +1770,7 @@ function showCreditsModal() {
   const escapeHandler = onKeyPress("escape", () => {
     hideModal();
   });
-  
+
   // Store escape handler for cleanup
   closeButton.escapeHandler = escapeHandler;
 }
