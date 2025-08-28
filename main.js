@@ -826,19 +826,19 @@ function initializeScenes() {
 
     const controlsButtonText = add([
       text("CONTROLS", {
-        size: 16,
-        font: "sink",
-      }),
+          size: 16,
+          font: "sink",
+        }),
       pos(GAME_WIDTH / 2 - 100, 300),
       anchor("center"),
-      color(255, 255, 255),
+        color(255, 255, 255),
       z(10),
     ]);
 
     const creditsButton = add([
       rect(180, 50),
       pos(GAME_WIDTH / 2 + 100, 300),
-      anchor("center"),
+        anchor("center"),
       color(150, 70, 70),
       area(),
       "creditsButton",
@@ -971,7 +971,7 @@ function initializeScenes() {
           z(1000),
           "simpleTest",
         ]);
-        
+
         const simpleText = add([
           text("SIMPLE TEST", { size: 20, font: "sink" }),
           pos(400, 300),
@@ -981,14 +981,14 @@ function initializeScenes() {
           z(1001),
           "simpleTest",
         ]);
-        
+
         console.log("🎮 Simple test elements created:", simpleTest, simpleText);
-        
+
         // Remove after 3 seconds
         setTimeout(() => {
           get("simpleTest").forEach(destroy);
         }, 3000);
-        
+
         showControlsModal();
       } catch (error) {
         console.error("Error in showControlsModal:", error);
@@ -1600,25 +1600,25 @@ function switchToLevel(targetLevel) {
 function showControlsModal() {
   console.log("🎮 showControlsModal() started");
   console.log("🎮 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
-  
+
   // Debug: Check all existing objects in the scene
   console.log("🎮 All objects in scene:", get("*").length);
   console.log("🎮 Existing modal objects:", get("modal").length);
-  
+
   // Remove existing modal if any
   hideModal();
-  
+
   // Log existing objects after cleanup
   console.log("🎮 Objects after hideModal:", get("*").length);
 
   console.log("🎮 Creating modal overlay...");
 
-  // Create modal overlay with click area
+  // Create modal overlay WITHOUT click area (testing)
   const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
     color(255, 0, 0, 0.5), // RED for testing - should be visible
-    area(),
+    // area(), // REMOVED to prevent immediate click events
     fixed(),
     z(500), // Much higher z-index
     "modal",
@@ -1720,10 +1720,13 @@ function showControlsModal() {
     "modal",
   ]);
 
-  closeButton.onClick(() => hideModal());
+  closeButton.onClick(() => {
+    console.log("🚨 Close button clicked - closing modal");
+    hideModal();
+  });
 
-  // Close on background click
-  overlay.onClick(() => hideModal());
+  // TEMPORARILY DISABLE background click to test
+  // overlay.onClick(() => hideModal());
 
   // DEBUG: Add a test element that should definitely be visible
   const testElement = add([
@@ -1737,14 +1740,23 @@ function showControlsModal() {
 
   console.log("🎮 TEST ELEMENT created:", testElement);
   console.log("🎮 Modal creation complete!");
-  
+
   // Debug: Check if elements still exist after creation
   setTimeout(() => {
-    console.log("🎮 AFTER 100ms - Modal objects still exist:", get("modal").length);
+    console.log(
+      "🎮 AFTER 100ms - Modal objects still exist:",
+      get("modal").length
+    );
     console.log("🎮 AFTER 100ms - Overlay still exists:", overlay.exists());
-    console.log("🎮 AFTER 100ms - Modal background still exists:", modalBg.exists());
+    console.log(
+      "🎮 AFTER 100ms - Modal background still exists:",
+      modalBg.exists()
+    );
     console.log("🎮 AFTER 100ms - Title still exists:", title.exists());
-    console.log("🎮 AFTER 100ms - Test element still exists:", testElement.exists());
+    console.log(
+      "🎮 AFTER 100ms - Test element still exists:",
+      testElement.exists()
+    );
   }, 100);
 }
 
@@ -1851,7 +1863,11 @@ function showCreditsModal() {
 }
 
 function hideModal() {
-  get("modal").forEach(destroy);
+  console.log("🚨 hideModal() called! Stack trace:");
+  console.trace();
+  const modalElements = get("modal");
+  console.log("🚨 Destroying", modalElements.length, "modal elements");
+  modalElements.forEach(destroy);
 }
 
 // Level, Player, Boss, and UI creation functions are now in separate files
