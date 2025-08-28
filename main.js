@@ -32,6 +32,13 @@ let gameState = {
   playerInBossArea: false,
 };
 
+// Debug state
+let debug = {
+  enabled: true, // Enable debug mode in development
+  inspectMode: false, // Show platform numbers and info
+  levelSelector: false, // Show level selector overlay
+};
+
 // Audio Management System
 class AudioManager {
   constructor() {
@@ -81,6 +88,11 @@ class AudioManager {
       await this.loadSound(
         "fireballExplosion",
         "./assets/audio/fireball_explosion.wav",
+        "sfx"
+      );
+      await this.loadSound(
+        "windballExplosion",
+        "./assets/audio/windball_explosion.wav",
         "sfx"
       );
       await this.loadSound(
@@ -517,6 +529,7 @@ async function loadGameAssets() {
     loadSprite("hero", "./assets/hero.png");
     loadSprite("level1Dragon", "./assets/level1/level1_dragon.png");
     loadSprite("level2Dragon", "./assets/level2/level2_dragon.png");
+    loadSprite("windball", "./assets/powers/windball.png");
     loadSprite("fireball", "./assets/powers/fireball.png");
     loadSprite("waterball", "./assets/powers/waterball.png");
     loadSprite("level1Platform", "./assets/level1/level1_platform.png");
@@ -623,7 +636,7 @@ async function loadGameAssets() {
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");
     loadSprite("rightArrow", "./assets/left.png"); // We'll flip this
-    loadSprite("fireIcon", "./assets/powers/fireball.png");
+    loadSprite("fireIcon", "./assets/powers/windball.png"); // Default power icon
     loadSprite("jumpIcon", "./assets/hero.png"); // Use hero sprite for jump
 
     // Initialize AudioManager
@@ -750,6 +763,9 @@ window.addEventListener("load", async () => {
       audioManager.getState().isMuted ? "MUTED" : "UNMUTED"
     );
   });
+
+  // Debug controls (available in all scenes)
+  setupDebugControls();
 
   // Start with main menu
   go("menu");
@@ -1168,6 +1184,276 @@ function initializeScenes() {
     // Mobile controls
     setupMobileControls(player);
   });
+}
+
+// Debug System for Development
+function setupDebugControls() {
+  console.log("🔧 Debug controls initialized:");
+  console.log("  [F1] - Toggle platform debug info");
+  console.log("  [F2] - Toggle level selector");
+  console.log("  [1] - Quick switch to Level 1");
+  console.log("  [2] - Quick switch to Level 2");
+
+  // Toggle platform debug info
+  onKeyPress("f1", () => {
+    debug.inspectMode = !debug.inspectMode;
+    console.log(`🔧 Platform debug mode: ${debug.inspectMode ? "ON" : "OFF"}`);
+    
+    if (debug.inspectMode) {
+      showDebugInfo();
+    } else {
+      hideDebugInfo();
+    }
+  });
+
+  // Toggle level selector
+  onKeyPress("f2", () => {
+    debug.levelSelector = !debug.levelSelector;
+    
+    if (debug.levelSelector) {
+      showLevelSelector();
+    } else {
+      hideLevelSelector();
+    }
+  });
+
+  // Quick level switches
+  onKeyPress("1", () => {
+    if (debug.enabled) {
+      switchToLevel(1);
+    }
+  });
+
+  onKeyPress("2", () => {
+    if (debug.enabled) {
+      switchToLevel(2);
+    }
+  });
+}
+
+function showDebugInfo() {
+  // Clear existing debug elements
+  get("debugPlatformNumber").forEach(destroy);
+  get("debugPlatformType").forEach(destroy);
+  get("debugPlatformCoords").forEach(destroy);
+  get("debugInfo").forEach(destroy);
+
+  // Show current level and position info
+  add([
+    text(`DEBUG MODE - Level ${gameState.level}`, {
+      size: 14,
+      font: "sink",
+    }),
+    pos(10, 110),
+    color(255, 255, 0),
+    fixed(),
+    z(100),
+    "debugInfo",
+  ]);
+
+  add([
+    text("F1: Toggle debug | F2: Level selector | 1/2: Quick switch", {
+      size: 12,
+      font: "sink",
+    }),
+    pos(10, 130),
+    color(200, 200, 200),
+    fixed(),
+    z(100),
+    "debugInfo",
+  ]);
+
+  // Add player position tracker
+  const player = get("player")[0];
+  if (player) {
+    player.onUpdate(() => {
+      // Remove old position display
+      get("debugPlayerPos").forEach(destroy);
+      
+      add([
+        text(`Player: (${Math.round(player.pos.x)}, ${Math.round(player.pos.y)})`, {
+          size: 12,
+          font: "sink",
+        }),
+        pos(10, 150),
+        color(100, 255, 100),
+        fixed(),
+        z(100),
+        "debugPlayerPos",
+      ]);
+    });
+  }
+
+  // Recreate platforms with debug info
+  if (getScene() === "game") {
+    const levelData = LEVEL_DATA[gameState.level];
+    if (levelData) {
+      createLevelPlatforms(levelData.platforms);
+    }
+  }
+}
+
+function hideDebugInfo() {
+  get("debugPlatformNumber").forEach(destroy);
+  get("debugPlatformType").forEach(destroy);
+  get("debugPlatformCoords").forEach(destroy);
+  get("debugInfo").forEach(destroy);
+  get("debugPlayerPos").forEach(destroy);
+}
+
+function showLevelSelector() {
+  // Remove existing level selector
+  hideLevelSelector();
+
+  // Create level selector overlay
+  add([
+    rect(GAME_WIDTH, GAME_HEIGHT),
+    pos(0, 0),
+    color(0, 0, 0, 0.8),
+    fixed(),
+    z(150),
+    "levelSelector",
+  ]);
+
+  add([
+    text("LEVEL SELECTOR", {
+      size: 32,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, 150),
+    anchor("center"),
+    color(255, 255, 0),
+    fixed(),
+    z(151),
+    "levelSelector",
+  ]);
+
+  // Level buttons
+  const levels = Object.keys(LEVEL_DATA);
+  levels.forEach((levelId, index) => {
+    const levelData = LEVEL_DATA[levelId];
+    const y = 250 + index * 80;
+    const isCurrentLevel = parseInt(levelId) === gameState.level;
+
+    // Level button background
+    const buttonColor = isCurrentLevel ? [100, 255, 100] : [100, 100, 200];
+    add([
+      rect(400, 60),
+      pos(GAME_WIDTH / 2 - 200, y - 30),
+      color(buttonColor[0], buttonColor[1], buttonColor[2], 0.3),
+      outline(2, rgb(buttonColor[0], buttonColor[1], buttonColor[2])),
+      fixed(),
+      z(151),
+      "levelSelector",
+    ]);
+
+    // Level info
+    add([
+      text(`Level ${levelId}: ${levelData.name}`, {
+        size: 20,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, y - 10),
+      anchor("center"),
+      color(255, 255, 255),
+      fixed(),
+      z(152),
+      "levelSelector",
+    ]);
+
+    add([
+      text(`Boss: ${BOSS_TYPES[levelData.boss].name} | Platforms: ${levelData.platforms.length}`, {
+        size: 14,
+        font: "sink",
+      }),
+      pos(GAME_WIDTH / 2, y + 10),
+      anchor("center"),
+      color(200, 200, 200),
+      fixed(),
+      z(152),
+      "levelSelector",
+    ]);
+
+    // Click area for level selection
+    add([
+      rect(400, 60),
+      pos(GAME_WIDTH / 2 - 200, y - 30),
+      area(),
+      fixed(),
+      z(153),
+      "levelSelector",
+      {
+        level: parseInt(levelId),
+      },
+    ]).onClick(() => {
+      switchToLevel(parseInt(levelId));
+      hideLevelSelector();
+    });
+  });
+
+  // Instructions
+  add([
+    text("Click a level to switch | Press F2 to close", {
+      size: 16,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT - 100),
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(152),
+    "levelSelector",
+  ]);
+
+  // Close button
+  add([
+    rect(100, 40),
+    pos(GAME_WIDTH / 2 - 50, GAME_HEIGHT - 60),
+    color(200, 50, 50),
+    area(),
+    fixed(),
+    z(153),
+    "levelSelector",
+  ]).onClick(() => {
+    hideLevelSelector();
+  });
+
+  add([
+    text("CLOSE", {
+      size: 16,
+      font: "sink",
+    }),
+    pos(GAME_WIDTH / 2, GAME_HEIGHT - 40),
+    anchor("center"),
+    color(255, 255, 255),
+    fixed(),
+    z(154),
+    "levelSelector",
+  ]);
+}
+
+function hideLevelSelector() {
+  get("levelSelector").forEach(destroy);
+  debug.levelSelector = false;
+}
+
+function switchToLevel(targetLevel) {
+  if (!LEVEL_DATA[targetLevel]) {
+    console.log(`🔧 Level ${targetLevel} does not exist`);
+    return;
+  }
+
+  console.log(`🔧 Switching to Level ${targetLevel}`);
+  
+  // Update game state
+  gameState.level = targetLevel;
+  gameState.bossDefeated = false;
+  gameState.bossEncounterStarted = false;
+  gameState.bossSpawned = false;
+  gameState.playerInBossArea = false;
+
+  // Go to game scene to load the new level
+  go("game");
 }
 
 // Level, Player, Boss, and UI creation functions are now in separate files

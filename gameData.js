@@ -5,6 +5,21 @@
 
 // Power definitions - unified system for all abilities
 const POWER_TYPES = {
+  WINDBALL: {
+    id: "windball",
+    name: "Windball",
+    sprite: "windball",
+    speed: 500,
+    cooldown: 0.3,
+    damage: 1,
+    effectColors: [
+      [200, 255, 255],
+      [150, 200, 255],
+    ],
+    trailColors: [200, 255, 255, 255],
+    sound: "windballExplosion", // Explosion sound effect
+    unlocked: true, // Player starts with this
+  },
   FIREBALL: {
     id: "fireball",
     name: "Fireball",
@@ -18,7 +33,7 @@ const POWER_TYPES = {
     ],
     trailColors: [255, 150, 0, 255],
     sound: "fireballExplosion", // Explosion sound effect
-    unlocked: true, // Player starts with this
+    unlocked: false, // Obtained from Fire Dragon boss
   },
   WATERBALL: {
     id: "waterball",
@@ -103,7 +118,7 @@ const BOSS_TYPES = {
     spawnPos: { x: 1950, y: 200 },
     circleRadius: 100,
     circleCenter: { x: 1950, y: 200 },
-    rewardPower: "FIREBALL", // Player already has this, so no new power
+    rewardPower: "FIREBALL", // Player gets fireball from Fire Dragon
     defeatSound: "victoryFanfare",
     colors: {
       healthBar: [255, 100, 0],
@@ -282,7 +297,7 @@ const BACKGROUND_THEMES = {
 
 // Player progression system
 const PLAYER_PROGRESSION = {
-  unlockedPowers: ["FIREBALL"], // Powers the player currently has
+  unlockedPowers: ["WINDBALL"], // Powers the player currently has (starts with windball)
   completedLevels: [], // Levels the player has completed
   currentLevel: 1,
 

@@ -107,8 +107,9 @@ smash-dragons/
 │   ├── hero.png
 │   ├── left.png
 │   ├── powers/                 # Power-related sprites
-│   │   ├── fireball.png
-│   │   └── waterball.png
+│   │   ├── windball.png        # Starting power
+│   │   ├── fireball.png        # Level 2 reward
+│   │   └── waterball.png       # Level 1 reward
 │   ├── level1/                 # Level 1 specific assets
 │   │   ├── level1_dragon.png
 │   │   ├── level1_platform.png

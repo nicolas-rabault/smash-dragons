@@ -84,7 +84,7 @@ jobs:
             echo "Error: assets/powers directory not found"
             exit 1
           fi
-          required_power_assets=("fireball.png" "waterball.png")
+          required_power_assets=("windball.png" "fireball.png" "waterball.png")
           for asset in "${required_power_assets[@]}"; do
             if [ ! -f "assets/powers/$asset" ]; then
               echo "Error: Required power asset assets/powers/$asset not found"
@@ -152,7 +152,7 @@ jobs:
 
           # Validate that required audio assets exist
           echo "Validating audio assets..."
-          required_audio=("menu_theme_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav" "waterball_explosion.wav")
+          required_audio=("menu_theme_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "windball_explosion.wav" "fireball_explosion.wav" "waterball_explosion.wav")
           for audio in "${required_audio[@]}"; do
             if [ ! -f "assets/audio/$audio" ]; then
               echo "Error: Required audio asset assets/audio/$audio not found"

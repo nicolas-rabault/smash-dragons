@@ -142,7 +142,7 @@ function createLevelPlatforms(platformData) {
                         gameState.level === 2 ? "level2Platform" : 
                         "level1Platform"; // fallback to level1
 
-  platformData.forEach((data) => {
+  platformData.forEach((data, index) => {
     const platform = add([
       sprite(platformSprite),
       pos(data.x, data.y),
@@ -150,10 +150,55 @@ function createLevelPlatforms(platformData) {
       area(),
       body({ isStatic: true }),
       "platform",
-      { platformType: data.type },
+      { platformType: data.type, platformIndex: index },
     ]);
 
-    // Platform glow effects removed - they were causing green squares
+    // Debug mode: Add platform numbers
+    if (debug.inspectMode) {
+      // Platform number label
+      add([
+        text(`${index}`, {
+          size: 16,
+          font: "sink",
+        }),
+        pos(data.x, data.y - 30),
+        color(255, 255, 0),
+        anchor("center"),
+        z(50),
+        "debugPlatformNumber",
+      ]);
+
+      // Platform type label
+      const typeColor = data.type === "start" ? [0, 255, 0] :
+                       data.type === "boss" ? [255, 0, 0] :
+                       data.type === "end" ? [0, 0, 255] :
+                       [255, 255, 255];
+      
+      add([
+        text(data.type.toUpperCase(), {
+          size: 12,
+          font: "sink",
+        }),
+        pos(data.x, data.y - 10),
+        color(typeColor[0], typeColor[1], typeColor[2]),
+        anchor("center"),
+        z(50),
+        "debugPlatformType",
+      ]);
+
+      // Platform coordinates
+      add([
+        text(`(${data.x}, ${data.y})`, {
+          size: 10,
+          font: "sink",
+        }),
+        pos(data.x, data.y + 40),
+        color(200, 200, 200),
+        anchor("center"),
+        z(50),
+        "debugPlatformCoords",
+      ]);
+    }
   });
 
   return platformData;
