@@ -22,10 +22,13 @@ function createBackground() {
 
 // Create themed background based on level type
 function createThemedBackground(theme, levelData) {
-  // Use animated level1 background for level 1, colored rectangles for other levels
+  // Use animated backgrounds for levels 1 and 2
   if (gameState.level === 1) {
     console.log("Creating animated level1 background...");
-    createAnimatedBackground();
+    createAnimatedBackground(1);
+  } else if (gameState.level === 2) {
+    console.log("Creating animated level2 background...");
+    createAnimatedBackground(2);
   } else {
     // Fallback to colored background for other levels
     add([
@@ -38,7 +41,7 @@ function createThemedBackground(theme, levelData) {
   }
 
   // Only draw colored layers if we don't have a proper background image
-  if (gameState.level !== 1) {
+  if (gameState.level !== 1 && gameState.level !== 2) {
     // Atmospheric layers
     theme.layers.forEach((layer, i) => {
       add([
@@ -134,9 +137,14 @@ function createPlatforms() {
 
 // Create platforms from level data
 function createLevelPlatforms(platformData) {
+  // Get the appropriate platform sprite for current level
+  const platformSprite = gameState.level === 1 ? "level1Platform" : 
+                        gameState.level === 2 ? "level2Platform" : 
+                        "level1Platform"; // fallback to level1
+
   platformData.forEach((data) => {
     const platform = add([
-      sprite("platform"),
+      sprite(platformSprite),
       pos(data.x, data.y),
       scale(0.8),
       area(),
@@ -353,8 +361,8 @@ function setupLevelCollisions(player) {
   // Platform interactions are handled by Kaboom's built-in physics
 }
 
-// Create animated background and parallax foreground for level 1
-function createAnimatedBackground() {
+// Create animated background and parallax foreground for any level
+function createAnimatedBackground(level = 1) {
   try {
     // Scale the background to cover the full screen height
     const scaleY = GAME_HEIGHT / 512; // Scale to fit screen height
@@ -368,8 +376,8 @@ function createAnimatedBackground() {
       `Creating ${numTiles} animated background tiles, scale: ${scaleX}`
     );
 
-    // Background frame names
-    const frameNames = [
+    // Background frame names based on level
+    const frameNames = level === 1 ? [
       "level1BackgroundFrame8",
       "level1BackgroundFrame7",
       "level1BackgroundFrame6",
@@ -378,7 +386,23 @@ function createAnimatedBackground() {
       "level1BackgroundFrame3",
       "level1BackgroundFrame2",
       "level1BackgroundFrame1",
+    ] : [
+      "level2BackgroundFrame12",
+      "level2BackgroundFrame11",
+      "level2BackgroundFrame10",
+      "level2BackgroundFrame9",
+      "level2BackgroundFrame8",
+      "level2BackgroundFrame7",
+      "level2BackgroundFrame6",
+      "level2BackgroundFrame5",
+      "level2BackgroundFrame4",
+      "level2BackgroundFrame3",
+      "level2BackgroundFrame2",
+      "level2BackgroundFrame1",
     ];
+
+    // Foreground sprite name based on level
+    const foregroundSprite = level === 1 ? "level1Foreground" : "level2Foreground";
 
     // Animation settings
     const fps = 12; // 12 FPS as requested
@@ -407,7 +431,7 @@ function createAnimatedBackground() {
 
       for (let i = 0; i < numTiles; i++) {
         const fgSprite = add([
-          sprite("level1Foreground"),
+          sprite(foregroundSprite),
           pos(i * tileWidth, 0),
           scale(scaleX, scaleY),
           z(-5), // Behind platforms but above background

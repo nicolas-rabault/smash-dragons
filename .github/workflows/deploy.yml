@@ -126,6 +126,30 @@ jobs:
           done
           echo "Level1-specific assets present ✓"
 
+          # Validate level2-specific assets
+          echo "Validating level2 assets..."
+          if [ ! -d "assets/level2" ]; then
+            echo "Error: assets/level2 directory not found"
+            exit 1
+          fi
+          required_level2_assets=("level2_platform.png" "level2_dragon.png" "level2_audio.wav" "level2_foreground.png")
+          for asset in "${required_level2_assets[@]}"; do
+            if [ ! -f "assets/level2/$asset" ]; then
+              echo "Error: Required level2 asset assets/level2/$asset not found"
+              exit 1
+            fi
+          done
+          
+          # Validate level2 background frames
+          required_level2_frames=("level2_background_frame_01.png" "level2_background_frame_02.png" "level2_background_frame_03.png" "level2_background_frame_04.png" "level2_background_frame_05.png" "level2_background_frame_06.png" "level2_background_frame_07.png" "level2_background_frame_08.png" "level2_background_frame_09.png" "level2_background_frame_10.png" "level2_background_frame_11.png" "level2_background_frame_12.png")
+          for frame in "${required_level2_frames[@]}"; do
+            if [ ! -f "assets/level2/$frame" ]; then
+              echo "Error: Required level2 background frame assets/level2/$frame not found"
+              exit 1
+            fi
+          done
+          echo "Level2-specific assets present ✓"
+
           # Validate that required audio assets exist
           echo "Validating audio assets..."
           required_audio=("menu_theme_loop.wav" "death_respawn_stinger.wav" "victory_fanfare.wav" "fireball_explosion.wav" "waterball_explosion.wav")

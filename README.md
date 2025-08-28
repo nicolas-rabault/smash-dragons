@@ -115,7 +115,12 @@ smash-dragons/
 │   │   ├── level1_audio.wav
 │   │   ├── level1_background_frame_01-08.png
 │   │   └── level1_foreground.png
-│   └── level2/                 # Level 2 background frames
+│   └── level2/                 # Level 2 specific assets
+│       ├── level2_dragon.png
+│       ├── level2_platform.png
+│       ├── level2_audio.wav
+│       ├── level2_background_frame_01-12.png
+│       └── level2_foreground.png
 └── .github/workflows/      # Auto-deployment to GitHub Pages
 ```
 

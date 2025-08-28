@@ -64,6 +64,11 @@ class AudioManager {
         "ambience"
       );
       await this.loadSound(
+        "fireAmbience",
+        "./assets/level2/level2_audio.wav",
+        "ambience"
+      );
+      await this.loadSound(
         "deathRespawn",
         "./assets/audio/death_respawn_stinger.wav",
         "sfx"
@@ -343,7 +348,13 @@ class AudioManager {
     console.log("Audio transition: -> Game");
     this.currentScene = "game";
     this.stopAll();
-    this.playAmbience("magmaAmbience");
+    
+    // Play appropriate ambience based on current level
+    const ambienceId = gameState.level === 1 ? "magmaAmbience" : 
+                      gameState.level === 2 ? "fireAmbience" : 
+                      "magmaAmbience"; // fallback
+    
+    this.playAmbience(ambienceId);
   }
 
   transitionToGameOver() {
@@ -504,10 +515,12 @@ async function loadGameAssets() {
   try {
     // Load PNG files directly instead of data URIs
     loadSprite("hero", "./assets/hero.png");
-    loadSprite("dragon", "./assets/level1/level1_dragon.png");
+    loadSprite("level1Dragon", "./assets/level1/level1_dragon.png");
+    loadSprite("level2Dragon", "./assets/level2/level2_dragon.png");
     loadSprite("fireball", "./assets/powers/fireball.png");
     loadSprite("waterball", "./assets/powers/waterball.png");
-    loadSprite("platform", "./assets/level1/level1_platform.png");
+    loadSprite("level1Platform", "./assets/level1/level1_platform.png");
+    loadSprite("level2Platform", "./assets/level2/level2_platform.png");
 
     // Load animated background frames
     loadSprite(
@@ -549,7 +562,63 @@ async function loadGameAssets() {
       "./assets/level1/level1_foreground.png"
     );
 
-    console.log("Loading animated level1 background frames and foreground...");
+    // Load level 2 animated background frames
+    loadSprite(
+      "level2BackgroundFrame1",
+      "./assets/level2/level2_background_frame_01.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame2",
+      "./assets/level2/level2_background_frame_02.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame3",
+      "./assets/level2/level2_background_frame_03.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame4",
+      "./assets/level2/level2_background_frame_04.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame5",
+      "./assets/level2/level2_background_frame_05.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame6",
+      "./assets/level2/level2_background_frame_06.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame7",
+      "./assets/level2/level2_background_frame_07.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame8",
+      "./assets/level2/level2_background_frame_08.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame9",
+      "./assets/level2/level2_background_frame_09.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame10",
+      "./assets/level2/level2_background_frame_10.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame11",
+      "./assets/level2/level2_background_frame_11.png"
+    );
+    loadSprite(
+      "level2BackgroundFrame12",
+      "./assets/level2/level2_background_frame_12.png"
+    );
+
+    // Load level 2 foreground for parallax effect
+    loadSprite(
+      "level2Foreground",
+      "./assets/level2/level2_foreground.png"
+    );
+
+    console.log("Loading animated background frames and foreground for all levels...");
 
     // Load mobile control icons from the assets folder
     loadSprite("leftArrow", "./assets/left.png");

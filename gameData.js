@@ -72,7 +72,7 @@ const BOSS_TYPES = {
   WATER_DRAGON: {
     id: "waterDragon",
     name: "Water Dragon",
-    sprite: "dragon",
+    sprite: "level1Dragon",
     scale: 0.6,
     hp: 15,
     speed: 100,
@@ -85,9 +85,30 @@ const BOSS_TYPES = {
     rewardPower: "WATERBALL",
     defeatSound: "victoryFanfare",
     colors: {
-      healthBar: [255, 0, 0],
-      healthBg: [100, 0, 0],
-      explosion: [255, 0, 255],
+      healthBar: [100, 150, 255],
+      healthBg: [50, 75, 150],
+      explosion: [100, 200, 255],
+    },
+  },
+  FIRE_DRAGON: {
+    id: "fireDragon",
+    name: "Fire Dragon",
+    sprite: "level2Dragon",
+    scale: 0.7,
+    hp: 20,
+    speed: 120,
+    powerType: "FIREBALL",
+    attackCooldown: 1.0,
+    movePattern: "circular",
+    spawnPos: { x: 1950, y: 200 },
+    circleRadius: 100,
+    circleCenter: { x: 1950, y: 200 },
+    rewardPower: "FIREBALL", // Player already has this, so no new power
+    defeatSound: "victoryFanfare",
+    colors: {
+      healthBar: [255, 100, 0],
+      healthBg: [150, 50, 0],
+      explosion: [255, 150, 50],
     },
   },
   ICE_DRAGON: {
@@ -162,9 +183,9 @@ const LEVEL_DATA = {
   },
   2: {
     id: 2,
-    name: "Frozen Peaks",
-    boss: "ICE_DRAGON",
-    background: "ice",
+    name: "Fire Caverns",
+    boss: "FIRE_DRAGON",
+    background: "fire",
     platforms: [
       { x: 150, y: 520, type: "start" },
       { x: 400, y: 400, type: "normal" },
@@ -176,11 +197,11 @@ const LEVEL_DATA = {
       { x: 1900, y: 350, type: "boss" },
       { x: 2150, y: 280, type: "end" },
     ],
-    ambientMusic: "iceAmbience", // To be added
+    ambientMusic: "fireAmbience",
     colors: {
-      background: [10, 15, 30],
-      ice: [200, 230, 255],
-      iceGlow: [150, 200, 255],
+      background: [20, 10, 15],
+      fire: [255, 100, 50],
+      fireGlow: [255, 150, 100],
     },
   },
   3: {
@@ -219,6 +240,18 @@ const BACKGROUND_THEMES = {
     hazard: {
       color: [255, 60, 0],
       glowColor: [255, 120, 20],
+    },
+  },
+  fire: {
+    baseColor: [20, 10, 15],
+    layers: [
+      { color: [40, 20, 25], offset: 0 },
+      { color: [60, 30, 35], offset: 50 },
+      { color: [80, 40, 45], offset: 100 },
+    ],
+    hazard: {
+      color: [255, 100, 50],
+      glowColor: [255, 150, 100],
     },
   },
   ice: {

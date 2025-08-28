@@ -197,14 +197,26 @@ function killBoss(boss) {
   createVictoryScreen(bossData);
 
   onKeyPress("space", () => {
-    // Restart level 1 but keep the unlocked powers and current score
-    gameState.level = 1;
-    gameState.bossDefeated = false;
-    gameState.bossEncounterStarted = false;
-    gameState.bossSpawned = false;
-    gameState.playerInBossArea = false;
-    // Keep score and lives, don't reset them
-    go("game");
+    // Progress to next level or restart if max level reached
+    if (gameState.level < 2) {
+      // Advance to next level
+      gameState.level++;
+      gameState.bossDefeated = false;
+      gameState.bossEncounterStarted = false;
+      gameState.bossSpawned = false;
+      gameState.playerInBossArea = false;
+      console.log(`🎮 Advancing to level ${gameState.level}`);
+      go("game");
+    } else {
+      // Game completed - restart from level 1 or show completion screen
+      gameState.level = 1;
+      gameState.bossDefeated = false;
+      gameState.bossEncounterStarted = false;
+      gameState.bossSpawned = false;
+      gameState.playerInBossArea = false;
+      console.log("🎉 Game completed! Restarting from level 1");
+      go("game");
+    }
   });
 }
 
@@ -305,9 +317,13 @@ function createVictoryScreen(bossData) {
     ]);
   }
 
-  // Instructions - well-spaced at bottom
+  // Instructions - well-spaced at bottom with level progression info
+  const nextLevelText = gameState.level < 2 
+    ? `Press SPACE to advance to Level ${gameState.level + 1}!`
+    : "Press SPACE to restart your adventure!";
+  
   add([
-    text("Press SPACE to continue your adventure", {
+    text(nextLevelText, {
       size: 20,
       font: "sink",
     }),
@@ -319,18 +335,21 @@ function createVictoryScreen(bossData) {
     "victoryText",
   ]);
 
-  add([
-    text("with your new power!", {
-      size: 20,
-      font: "sink",
-    }),
-    color(200, 200, 255),
-    pos(GAME_WIDTH / 2, 510),
-    anchor("center"),
-    fixed(),
-    z(200),
-    "victoryText",
-  ]);
+  // Only show power text if there's a new power
+  if (bossData.rewardPower && POWER_TYPES[bossData.rewardPower]) {
+    add([
+      text("with your new power!", {
+        size: 20,
+        font: "sink",
+      }),
+      color(200, 200, 255),
+      pos(GAME_WIDTH / 2, 510),
+      anchor("center"),
+      fixed(),
+      z(200),
+      "victoryText",
+    ]);
+  }
 
   console.log("✨ Beautiful victory screen created with perfect spacing!");
 }
