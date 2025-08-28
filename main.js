@@ -921,11 +921,11 @@ function initializeScenes() {
       if (isHovering && !controlsButton.isHovered) {
         controlsButton.isHovered = true;
         controlsButton.color = rgb(100, 100, 200);
-        document.body.style.cursor = "pointer";
+        if (document.body) document.body.style.cursor = "pointer";
       } else if (!isHovering && controlsButton.isHovered) {
         controlsButton.isHovered = false;
         controlsButton.color = rgb(70, 70, 150);
-        document.body.style.cursor = "default";
+        if (document.body) document.body.style.cursor = "default";
       }
     });
 
@@ -941,11 +941,11 @@ function initializeScenes() {
       if (isHovering && !creditsButton.isHovered) {
         creditsButton.isHovered = true;
         creditsButton.color = rgb(200, 100, 100);
-        document.body.style.cursor = "pointer";
+        if (document.body) document.body.style.cursor = "pointer";
       } else if (!isHovering && creditsButton.isHovered) {
         creditsButton.isHovered = false;
         creditsButton.color = rgb(150, 70, 70);
-        document.body.style.cursor = "default";
+        if (document.body) document.body.style.cursor = "default";
       }
     });
 
@@ -964,12 +964,12 @@ function initializeScenes() {
         startButton.isHovered = true;
         startButton.color = rgb(70, 200, 70);
         buttonText.color = rgb(255, 255, 255);
-        document.body.style.cursor = "pointer";
+        if (document.body) document.body.style.cursor = "pointer";
       } else if (!isHovering && startButton.isHovered) {
         startButton.isHovered = false;
         startButton.color = rgb(50, 150, 50);
         buttonText.color = rgb(255, 255, 255);
-        document.body.style.cursor = "default";
+        if (document.body) document.body.style.cursor = "default";
       }
     });
 
@@ -1132,11 +1132,11 @@ function initializeScenes() {
       if (isHovering && !restartButton.isHovered) {
         restartButton.isHovered = true;
         restartButton.color = rgb(70, 200, 70);
-        document.body.style.cursor = "pointer";
+        if (document.body) document.body.style.cursor = "pointer";
       } else if (!isHovering && restartButton.isHovered) {
         restartButton.isHovered = false;
         restartButton.color = rgb(50, 150, 50);
-        document.body.style.cursor = "default";
+        if (document.body) document.body.style.cursor = "default";
       }
     });
 
@@ -1151,11 +1151,11 @@ function initializeScenes() {
       if (isHovering && !menuButton.isHovered) {
         menuButton.isHovered = true;
         menuButton.color = rgb(200, 70, 70);
-        document.body.style.cursor = "pointer";
+        if (document.body) document.body.style.cursor = "pointer";
       } else if (!isHovering && menuButton.isHovered) {
         menuButton.isHovered = false;
         menuButton.color = rgb(150, 50, 50);
-        document.body.style.cursor = "default";
+        if (document.body) document.body.style.cursor = "default";
       }
     });
 
@@ -1540,11 +1540,12 @@ function showControlsModal() {
   // Remove existing modal if any
   hideModal();
 
-  // Create modal overlay
-  add([
+  // Create modal overlay with click area
+  const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
     color(0, 0, 0, 0.8),
+    area(),
     fixed(),
     z(200),
     "modal",
@@ -1633,22 +1634,28 @@ function showControlsModal() {
 
   closeButton.onClick(() => hideModal());
 
-  // Close on escape key
-  onKeyPress("escape", () => hideModal());
-  
   // Close on background click
-  get("modal")[0].onClick(() => hideModal());
+  overlay.onClick(() => hideModal());
+
+  // Close on escape key - add cleanup for escape handler
+  const escapeHandler = onKeyPress("escape", () => {
+    hideModal();
+  });
+  
+  // Store escape handler for cleanup
+  closeButton.escapeHandler = escapeHandler;
 }
 
 function showCreditsModal() {
   // Remove existing modal if any
   hideModal();
 
-  // Create modal overlay
-  add([
+  // Create modal overlay with click area
+  const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
     color(0, 0, 0, 0.8),
+    area(),
     fixed(),
     z(200),
     "modal",
@@ -1734,11 +1741,16 @@ function showCreditsModal() {
 
   closeButton.onClick(() => hideModal());
 
-  // Close on escape key
-  onKeyPress("escape", () => hideModal());
-  
   // Close on background click
-  get("modal")[0].onClick(() => hideModal());
+  overlay.onClick(() => hideModal());
+
+  // Close on escape key - add cleanup for escape handler
+  const escapeHandler = onKeyPress("escape", () => {
+    hideModal();
+  });
+  
+  // Store escape handler for cleanup
+  closeButton.escapeHandler = escapeHandler;
 }
 
 function hideModal() {
