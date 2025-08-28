@@ -962,6 +962,33 @@ function initializeScenes() {
     controlsButton.onClick(() => {
       console.log("Controls button clicked");
       try {
+        // Try a simple immediate test first
+        const simpleTest = add([
+          rect(200, 100),
+          pos(300, 250),
+          color(255, 0, 0),
+          fixed(),
+          z(1000),
+          "simpleTest",
+        ]);
+        
+        const simpleText = add([
+          text("SIMPLE TEST", { size: 20, font: "sink" }),
+          pos(400, 300),
+          anchor("center"),
+          color(255, 255, 255),
+          fixed(),
+          z(1001),
+          "simpleTest",
+        ]);
+        
+        console.log("🎮 Simple test elements created:", simpleTest, simpleText);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+          get("simpleTest").forEach(destroy);
+        }, 3000);
+        
         showControlsModal();
       } catch (error) {
         console.error("Error in showControlsModal:", error);
@@ -1573,13 +1600,20 @@ function switchToLevel(targetLevel) {
 function showControlsModal() {
   console.log("🎮 showControlsModal() started");
   console.log("🎮 GAME_WIDTH:", GAME_WIDTH, "GAME_HEIGHT:", GAME_HEIGHT);
-
+  
+  // Debug: Check all existing objects in the scene
+  console.log("🎮 All objects in scene:", get("*").length);
+  console.log("🎮 Existing modal objects:", get("modal").length);
+  
   // Remove existing modal if any
   hideModal();
+  
+  // Log existing objects after cleanup
+  console.log("🎮 Objects after hideModal:", get("*").length);
 
   console.log("🎮 Creating modal overlay...");
 
-    // Create modal overlay with click area
+  // Create modal overlay with click area
   const overlay = add([
     rect(GAME_WIDTH, GAME_HEIGHT),
     pos(0, 0),
@@ -1589,12 +1623,12 @@ function showControlsModal() {
     z(500), // Much higher z-index
     "modal",
   ]);
-  
+
   console.log("🎮 Overlay created:", overlay);
   console.log("🎮 Overlay position:", overlay.pos);
   console.log("🎮 Overlay z-index:", overlay.z);
 
-    // Modal background
+  // Modal background
   console.log("🎮 Creating modal background...");
   const modalBg = add([
     rect(500, 400),
@@ -1606,12 +1640,12 @@ function showControlsModal() {
     z(501), // Higher z-index
     "modal",
   ]);
-  
+
   console.log("🎮 Modal background created:", modalBg);
   console.log("🎮 Modal background position:", modalBg.pos);
   console.log("🎮 Modal background z-index:", modalBg.z);
 
-    // Title
+  // Title
   console.log("🎮 Creating modal title...");
   const title = add([
     text("CONTROLS", {
@@ -1625,7 +1659,7 @@ function showControlsModal() {
     z(502), // Higher z-index
     "modal",
   ]);
-  
+
   console.log("🎮 Modal title created:", title);
   console.log("🎮 Modal title position:", title.pos);
   console.log("🎮 Modal title text:", title.text);
@@ -1690,7 +1724,7 @@ function showControlsModal() {
 
   // Close on background click
   overlay.onClick(() => hideModal());
-  
+
   // DEBUG: Add a test element that should definitely be visible
   const testElement = add([
     rect(100, 100),
@@ -1700,9 +1734,18 @@ function showControlsModal() {
     z(1000), // Maximum z-index
     "modal",
   ]);
-  
+
   console.log("🎮 TEST ELEMENT created:", testElement);
   console.log("🎮 Modal creation complete!");
+  
+  // Debug: Check if elements still exist after creation
+  setTimeout(() => {
+    console.log("🎮 AFTER 100ms - Modal objects still exist:", get("modal").length);
+    console.log("🎮 AFTER 100ms - Overlay still exists:", overlay.exists());
+    console.log("🎮 AFTER 100ms - Modal background still exists:", modalBg.exists());
+    console.log("🎮 AFTER 100ms - Title still exists:", title.exists());
+    console.log("🎮 AFTER 100ms - Test element still exists:", testElement.exists());
+  }, 100);
 }
 
 function showCreditsModal() {
